@@ -29,6 +29,20 @@ public class ListaPersona {
         }
     }
     
+    // Método para obtener un arreglo con todas las personas en la lista
+    public Persona[] obtenerPersonas() {
+        int longitud = longitud(); // Calcula el tamaño de la lista
+        Persona[] personas = new Persona[longitud];
+        NodoPersona actual = cabeza;
+        int index = 0;
+
+        while (actual != null) {
+            personas[index++] = actual.persona; // Agrega cada persona al arreglo
+            actual = actual.siguiente;
+        }
+        return personas; // Devuelve el arreglo con todas las personas
+    }
+    
     // Método para obtener la longitud de la lista
     public int longitud() {
         int longitud = 0;
