@@ -43,7 +43,7 @@ public class Menuu extends javax.swing.JFrame {
                 MostrarGrafoActionPerformed(evt);
             }
         });
-        jPanel1.add(MostrarGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 397, 280, -1));
+        jPanel1.add(MostrarGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 390, 280, -1));
 
         CargaArchivo.setBackground(new java.awt.Color(153, 51, 255));
         CargaArchivo.setText("CARGAR ARCHIVO");
@@ -52,7 +52,7 @@ public class Menuu extends javax.swing.JFrame {
                 CargaArchivoActionPerformed(evt);
             }
         });
-        jPanel1.add(CargaArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 280, -1));
+        jPanel1.add(CargaArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 340, 280, -1));
 
         jButton1.setBackground(new java.awt.Color(153, 51, 255));
         jButton1.setText("X");
@@ -67,11 +67,14 @@ public class Menuu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
