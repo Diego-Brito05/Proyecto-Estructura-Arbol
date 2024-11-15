@@ -8,14 +8,14 @@ import Arbol.Persona;
  *
  * @author Diego
  */
-class HashTable {
+public class HashTable {
     private String[] claves; // Arreglo para almacenar las claves de cada índice
     private ListaPersona[] tabla; // Arreglo para almacenar las listas de personas
     private int size;
 
-    public HashTable(int capacidad) {
-        this.tabla = new ListaPersona[capacidad];
-        this.claves = new String[capacidad];
+    public HashTable() {
+        this.tabla = new ListaPersona[200];
+        this.claves = new String[200];
         this.size = 0;
     }
 

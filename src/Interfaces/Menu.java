@@ -4,18 +4,75 @@
  */
 package Interfaces;
 
+import EDD.HashTable;
+import Arbol.Arbol;
+import EDD.ListaPersona;
+import LectorJson.LectorJson;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import org.graphstream.graph.Graph;
+import org.graphstream.ui.swing_viewer.SwingViewer;
+import org.graphstream.ui.swing_viewer.ViewPanel;
+import org.graphstream.ui.view.Viewer;
+
 /**
  *
  * @author Diego
  */
 public class Menu extends javax.swing.JFrame {
-
+    private static Arbol arbol;
+    private static File archivo;
+    private static Graph familia;
+    private static String mySlylesheet = "node { size: 15px; shape:circle; fill-color:blue; text-size: 20;text-background-color:white; text-background-mode:rounded-box; text-alignment:at-right; shadow-mode: plain; shadow-color: black; shadow-width:5px; shadow-offset: 0px;text-offset: 5px, 5px;}"
+            + "edge { size : 10px; fill-color: black;}";
     /**
      * Creates new form Menuu
      */
-    public Menu() {
+    public Menu(Arbol arbol, File archivo) {
+        this.setVisible(true);
         initComponents();
+        this.setLocationRelativeTo(null);
+        if (arbol==null){
+        this.arbol=null;
+        }else{
+            this.arbol=arbol;
+        }
+        if (archivo==null){
+        this.archivo=null;
+        }else{
+            this.archivo=archivo;
+        }
+        this.setLocationRelativeTo(null);
+ 
+        }
+    
+    public Arbol getArbol() {
+        return arbol;
     }
+
+    public void setGrafo(Arbol arbol) {
+        this.arbol = arbol;
+    }
+
+    public File getArchivo() {
+        return archivo;
+    }
+
+    public void setArchivo(File archivo) {
+        this.archivo = archivo;
+    }
+
+    public Graph getFamilia(){
+        return familia;
+    }
+    
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -79,11 +136,49 @@ public class Menu extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
 
+    
     private void CargaArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargaArchivoActionPerformed
-
+    LectorJson LeerJson =new LectorJson();
+        HashTable hashtable= new HashTable(); 
+        Arbol grafo= new Arbol();
+        ListaPersona personas = new ListaPersona();
+        File archivo = LeerJson.LecturaJson(personas);
+        setArchivo(archivo);
+        grafo.crearArbol(personas);
+        hashtable.crearHash(personas);
+        setGrafo(arbol);
+                         
     }//GEN-LAST:event_CargaArchivoActionPerformed
+    
+    public void displayGraph(Graph graph2) {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        JPanel panel = new JPanel(new GridLayout()){
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(1600, 960);
+            }
+        };
+        frame.setSize(panel.getWidth(), panel.getHeight());
+     
+        Viewer viewer = new SwingViewer(graph2, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+        viewer.enableAutoLayout();
+        ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
+        panel.add(viewPanel);
+        frame.add(panel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);      
+    }
+    
+    /*
+    Este metodo se encarga de crear el grafo con la libreria graphstream para luego ser mostrado
+    
+    */
+    
     private void MostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarGrafoActionPerformed
 
     }//GEN-LAST:event_MostrarGrafoActionPerformed
@@ -134,4 +229,35 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the CargaArchivo
+     */
+    public javax.swing.JButton getCargaArchivo() {
+        return CargaArchivo;
+    }
+
+    /**
+     * @return the MostrarGrafo
+     */
+    public javax.swing.JButton getMostrarGrafo() {
+        return MostrarGrafo;
+    }
+
+    /**
+     * @return the jButton1
+     */
+    public javax.swing.JButton getjButton1() {
+        return jButton1;
+    }
+
+    /**
+     * @return the jPanel1
+     */
+    public javax.swing.JPanel getjPanel1() {
+        return jPanel1;
+    }
+
+    
+    
 }

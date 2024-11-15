@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Arbol.Persona;
 import EDD.ListaPersona;
+
 /**
  *
  * @author Diego
@@ -16,7 +17,7 @@ import EDD.ListaPersona;
 public class LectorJson {
 
 
-public File LecturaJson(ListaPersona listaPersonas) {
+ public File LecturaJson(ListaPersona listaPersonas) {
         // Crear JFileChooser
         JFileChooser jfc = new JFileChooser();
         jfc.setFileFilter(new FileNameExtensionFilter("Archivos JSON", "json"));
@@ -33,6 +34,7 @@ public File LecturaJson(ListaPersona listaPersonas) {
                 try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
                     String linea;
                     String nombre = null, numeral = null, padre = null, mote = null, ojos = null, pelo = null;
+                    String[] hijos = new String[0];  // Inicializamos como arreglo vacío
 
                     while ((linea = br.readLine()) != null) {
                         linea = linea.trim();
@@ -48,17 +50,20 @@ public File LecturaJson(ListaPersona listaPersonas) {
                             ojos = extraerValor(linea);
                         } else if (linea.contains("\"Of hair\"")) {
                             pelo = extraerValor(linea);
+                        } else if (linea.contains("\"Father to\"")) {
+                            hijos = extraerHijos(linea);  // Obtener los nombres de los hijos
                         } else if (!linea.startsWith("{") && linea.endsWith(": [")) {
                             nombre = linea.substring(1, linea.length() - 3); // Eliminar comillas y dos puntos al final
                         }
 
                         // Si todos los atributos han sido leídos, crear y almacenar el objeto Persona
                         if (nombre != null && numeral != null && padre != null && mote != null && ojos != null && pelo != null) {
-                            Persona persona = new Persona(nombre, numeral, padre, mote, ojos, pelo);
+                            Persona persona = new Persona(nombre, numeral, padre, mote, ojos, pelo, hijos);
                             listaPersonas.agregar(persona); // Agregar el objeto Persona a la ListaPersona
 
                             // Restablecer los valores para la siguiente persona
                             nombre = numeral = padre = mote = ojos = pelo = null;
+                            hijos = new String[0]; // Limpiar el arreglo de hijos para la siguiente persona
                         }
                     }
 
@@ -80,5 +85,23 @@ public File LecturaJson(ListaPersona listaPersonas) {
         int inicio = linea.indexOf(":") + 2;
         int fin = linea.lastIndexOf("\"");
         return linea.substring(inicio, fin);
+    }
+
+    // Método auxiliar para extraer los hijos de una línea JSON
+    private String[] extraerHijos(String linea) {
+        // Obtener el contenido del array de hijos entre corchetes
+        int inicio = linea.indexOf("[") + 1;
+        int fin = linea.indexOf("]", inicio);
+        String hijosStr = linea.substring(inicio, fin).trim();
+
+        // Dividir los nombres de los hijos (separados por comas)
+        if (!hijosStr.isEmpty()) {
+            String[] nombresHijos = hijosStr.split(",");
+            for (int i = 0; i < nombresHijos.length; i++) {
+                nombresHijos[i] = nombresHijos[i].trim().replace("\"", ""); // Limpiar y agregar al arreglo
+            }
+            return nombresHijos;
+        }
+        return new String[0];  // Si no hay hijos, devolver un arreglo vacío
     }
 }

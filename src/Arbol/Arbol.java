@@ -9,15 +9,17 @@ package Arbol;
  * @author Diego
  */
 public class Arbol {
-    private Persona valor;               
+    private Persona persona;               
     private Arbol primerHijo;            
-    private Arbol hermanoDerecho;        
-
+    private Arbol hermanoDerecho;
+      
+    
     // Constructor para crear un nodo con un valor de tipo Persona
-    public Arbol(Persona valor) {
-        this.valor = valor;
+    public Arbol() {
+        this.persona = null;
         this.primerHijo = null;
         this.hermanoDerecho = null;
+        
     }
 
     // Método para agregar un hijo al nodo actual
@@ -34,8 +36,8 @@ public class Arbol {
     }
 
     // Método para obtener el valor del nodo
-    public Persona getValor() {
-        return valor;
+    public Persona getPersona() {
+        return persona;
     }
 
     // Método para obtener el primer hijo del nodo
@@ -55,7 +57,7 @@ public class Arbol {
 
     // Método para recorrer el árbol en preorden y mostrar cada nodo
     public void recorrerPreorden() {
-        System.out.print(valor + " ");
+        System.out.print(persona + " ");
         if (primerHijo != null) {
             primerHijo.recorrerPreorden();
         }
@@ -69,9 +71,10 @@ public class Arbol {
         if (primerHijo != null) {
             primerHijo.recorrerPostorden();
         }
-        System.out.print(valor + " ");
+        System.out.print(persona + " ");
         if (hermanoDerecho != null) {
             hermanoDerecho.recorrerPostorden();
         }
     }
 }
+   
