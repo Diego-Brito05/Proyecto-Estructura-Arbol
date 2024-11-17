@@ -33,7 +33,7 @@ public class Menu extends javax.swing.JFrame {
     /**
      * Creates new form Menuu
      */
-    public Menu(Arbol arbol, File archivo) {
+    public Menu() {
         this.setVisible(true);
         initComponents();
         this.setLocationRelativeTo(null);
@@ -142,12 +142,11 @@ public class Menu extends javax.swing.JFrame {
     private void CargaArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargaArchivoActionPerformed
     LectorJson LeerJson =new LectorJson();
         HashTable hashtable= new HashTable(); 
-        Arbol grafo= new Arbol();
         ListaPersona personas = new ListaPersona();
         File archivo = LeerJson.LecturaJson(personas);
         setArchivo(archivo);
-        grafo.crearArbol(personas);
-        hashtable.crearHash(personas);
+        this.arbol=(Arbol.crearArbolDesdeLista(personas));
+        hashtable.putLista(personas);
         setGrafo(arbol);
                          
     }//GEN-LAST:event_CargaArchivoActionPerformed

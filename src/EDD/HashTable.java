@@ -31,16 +31,39 @@ public class HashTable {
         // Si no hay lista en el índice, creamos una nueva y guardamos la clave
         if (tabla[indice] == null) {
             tabla[indice] = new ListaPersona();
-            claves[indice] = clave; // Guardamos la clave en el arreglo de claves
-        } else if (!clave.equals(claves[indice])) {
-            // Si hay colisión (diferente clave en el mismo índice), puedes decidir cómo manejarla
+            claves[indice] = clave;  // Guardamos la clave en el arreglo de claves
+        }
+
+        // Si las claves coinciden, agregamos la persona al final de la lista
+        if (clave.equals(claves[indice])) {
+            tabla[indice].agregar(persona);  // Agrega al final de la lista
+        } else {
+            // Si hay colisión con una clave diferente, mostramos un mensaje y no hacemos nada
             System.out.println("Colisión detectada para la clave: " + clave);
             return;
         }
 
-        // Agregamos la persona a la lista en el índice
-        tabla[indice].agregar(persona);
         size++;
+    }
+
+    // Método para agregar una lista de personas con diferentes claves
+    public void putLista(ListaPersona lista) {
+        NodoPersona actual = lista.getCabeza();
+        while (actual != null) {
+            Persona persona = actual.persona;
+            String clave = obtenerClaveDePersona(persona);
+
+            // Usamos la clave de la persona para agregarla al HashTable
+            put(clave, persona);
+            actual = actual.siguiente;
+        }
+    }
+
+    // Método para obtener la clave de una persona (por ejemplo, el primer nombre)
+    private String obtenerClaveDePersona(Persona persona) {
+        // Suponiendo que la clave es el primer nombre (antes de la coma)
+        String[] partes = persona.getNombre().split(" ");
+        return partes[0];  // Primer nombre
     }
 
     // Método para obtener la lista de personas asociadas a una clave
@@ -63,23 +86,23 @@ public class HashTable {
         }
     }
 
-    
     public int size() {
         return size;
     }
 
-    
     public boolean containsKey(String clave) {
         int indice = hash(clave);
         return tabla[indice] != null && clave.equals(claves[indice]);
     }
-    public boolean tieneUnSoloElemento(String clave) {
-    int indice = hash(clave);
 
-    // Verifica si el índice contiene una lista y si la clave coincide
-    if (tabla[indice] != null && clave.equals(claves[indice])) {
-        return tabla[indice].longitud() == 1;
-    }
-    return false; // Retorna falso si no hay elementos o si hay más de uno
+    // Método que detecta si hay solo un elemento en el índice
+    public boolean tieneUnSoloElemento(String clave) {
+        int indice = hash(clave);
+
+        // Verifica si el índice contiene una lista y si la clave coincide
+        if (tabla[indice] != null && clave.equals(claves[indice])) {
+            return tabla[indice].longitud() == 1;
+        }
+        return false; // Retorna falso si no hay elementos o si hay más de uno
     }
 }

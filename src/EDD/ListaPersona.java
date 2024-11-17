@@ -14,14 +14,15 @@ public class ListaPersona {
     public ListaPersona() {
         this.cabeza = null;
     }
+    
 
     // Método para agregar una persona al final de la lista
     public void agregar(Persona persona) {
         NodoPersona nuevoNodo = new NodoPersona(persona);
-        if (cabeza == null) {
+        if (getCabeza() == null) {
             cabeza = nuevoNodo;
         } else {
-            NodoPersona actual = cabeza;
+            NodoPersona actual = getCabeza();
             while (actual.siguiente != null) {
                 actual = actual.siguiente;
             }
@@ -33,7 +34,7 @@ public class ListaPersona {
     public Persona[] obtenerPersonas() {
         int longitud = longitud(); // Calcula el tamaño de la lista
         Persona[] personas = new Persona[longitud];
-        NodoPersona actual = cabeza;
+        NodoPersona actual = getCabeza();
         int index = 0;
 
         while (actual != null) {
@@ -46,7 +47,7 @@ public class ListaPersona {
     // Método para obtener la longitud de la lista
     public int longitud() {
         int longitud = 0;
-        NodoPersona actual = cabeza;
+        NodoPersona actual = getCabeza();
         while (actual != null) {
             longitud++;
             actual = actual.siguiente;
@@ -57,5 +58,12 @@ public class ListaPersona {
     // Método para eliminar todos los nodos de la lista
     public void eliminarTodos() {
         cabeza = null;
+    }
+
+    /**
+     * @return the cabeza
+     */
+    public NodoPersona getCabeza() {
+        return cabeza;
     }
 }
