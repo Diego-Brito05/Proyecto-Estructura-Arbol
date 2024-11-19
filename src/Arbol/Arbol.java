@@ -24,11 +24,11 @@ public class Arbol {
     }
 
     // Método para agregar un hijo al nodo actual
-    public void agregarHijo(Arbol hijo) {
-        if (primerHijo == null) {
-            primerHijo = hijo;
+    public void agregarHijo(Arbol padre,Arbol hijo) {
+        if (padre.primerHijo == null) {
+            padre.primerHijo = hijo;
         } else {
-            Arbol actual = primerHijo;
+            Arbol actual = padre.primerHijo;
             while (actual.hermanoDerecho != null) {
                 actual = actual.hermanoDerecho;
             }
@@ -78,9 +78,7 @@ public class Arbol {
         }
     }
         public static Arbol crearArbolDesdeLista(ListaPersona listaPersonas) {
-        if (listaPersonas == null || listaPersonas.getCabeza() == null) {
-            throw new IllegalArgumentException("La lista de personas está vacía.");
-        }
+        
 
         // Tomar la primera persona como raíz
         NodoPersona actual = listaPersonas.getCabeza();
@@ -93,7 +91,7 @@ public class Arbol {
             Persona personaActual = actual.persona;
             String padreInfo = personaActual.getPadre();
 
-            if (padreInfo == null || padreInfo.isEmpty()) {
+            if ("[unknown]".equals(padreInfo) || padreInfo.isEmpty()) {
                 throw new IllegalStateException("La persona " + personaActual.getNombre() + " no tiene padre especificado.");
             }
 
@@ -102,83 +100,83 @@ public class Arbol {
             if (nodoPadre == null) {
                 throw new IllegalStateException("No se encontró el nodo padre: " + padreInfo);
             }
-
-            // Crear el nuevo nodo y agregarlo como hijo
             Arbol nuevoNodo = new Arbol(personaActual);
-            nodoPadre.agregarHijo(nuevoNodo);
+            nodoPadre.agregarHijo(nodoPadre , nuevoNodo);
 
             actual = actual.siguiente; // Avanzamos al siguiente nodo
-        }
-        // Validar y completar los hijos del árbol
-        raiz.validarYCompletarHijos();
+        }      
         return raiz; // Devolvemos la raíz del árbol
     }
          // Método para buscar un nodo padre por el nombre o mote
-    private static Arbol buscarNodoPorPadre(Arbol nodo, String padreInfo) {
-        if (nodo == null) {
-            return null;
-        }
+    private static Arbol buscarNodoPorPadre(Arbol nodoActual, String padreInfo) {
+    if (nodoActual == null) {
+        return null;
+    }
 
-        // Caso 1: Buscar por nombre exacto
-        if (padreInfo.equals(nodo.getValor().getNombre())) {
-            return nodo;
-        }
+    // Generar "nombre, numeral" para el nodo actual
+    Persona persona = nodoActual.getValor();
+    String identificadorNodo = persona.getNombre() + ", " + persona.getNumeral()+" of his name";
 
-        // Caso 2: Buscar por mote
-        if (padreInfo.equals(nodo.getValor().getMote())) {
-            return nodo;
-        }
+    // Verificar si padreInfo coincide con el identificador o con el mote
+    if (identificadorNodo.equalsIgnoreCase(padreInfo) || 
+        (persona.getMote() != null && persona.getMote().equalsIgnoreCase(padreInfo))|| persona.getNombre().equalsIgnoreCase(padreInfo)) {
+        return nodoActual;
+    }
 
-        // Caso 3: Si contiene una coma, extraer el nombre (parte antes de la coma)
-        if (padreInfo.contains(",")) {
-            String nombre = padreInfo.split(",")[0].trim();
-            if (nombre.equals(nodo.getValor().getNombre())) {
-                return nodo;
+    // Buscar recursivamente en los hijos
+    Arbol hijo = nodoActual.getPrimerHijo();
+    while (hijo != null) {
+        Arbol resultado = buscarNodoPorPadre(hijo, padreInfo);
+        if (resultado != null) {
+            return resultado; // Retornar el nodo encontrado
+        }
+        hijo = hijo.getHermanoDerecho(); // Pasar al siguiente hermano
+    }
+
+    // Si no se encuentra, retornar null
+    return null;
+    }
+    
+
+    public void validarYCompletarHijosPreorden(Arbol nodoActual) {
+    if (nodoActual == null) {
+        return;
+    }
+
+    // Obtener la persona del nodo actual
+    Persona persona = nodoActual.getValor();
+    if (persona.getHijos() != null) {
+        for (String nombreHijo : persona.getHijos()) {
+            // Verificar si el nombre del hijo está representado como un nodo hijo
+            if (!nodoActual.existeHijo(nodoActual ,nombreHijo)) {
+                // Si no está, crear una nueva Persona con valores desconocidos
+                Persona hijoNoEnc = new Persona(
+                    nombreHijo,
+                    " ",
+                    persona.getNombre(), // El padre es el nodo actual
+                    "unknown",
+                    "unknown",
+                    "unknown",
+                    null
+                );
+
+                // Agregar el nuevo nodo al árbol
+                nodoActual.agregarHijo(nodoActual,new Arbol(hijoNoEnc));
             }
         }
-
-        // Recursión: buscar en hijos y hermanos
-        Arbol encontrado = buscarNodoPorPadre(nodo.getPrimerHijo(), padreInfo);
-        if (encontrado != null) {
-            return encontrado;
-        }
-        return buscarNodoPorPadre(nodo.getHermanoDerecho(), padreInfo);
-    }
-    public void validarYCompletarHijos() {
-    if (valor == null) return;
-
-    // Verificar los hijos declarados en el atributo "hijos" de la Persona
-    if (valor.getHijos() != null) {
-        for (String nombreHijo : valor.getHijos()) {
-            // Si no existe un hijo con ese nombre, agregarlo al árbol
-            if (!existeHijo(nombreHijo)) {
-                // Extraer el apellido del padre del atributo "nombre"
-                String apellidoPadre = extraerApellido(valor.getNombre());
-
-                // Construir el nombre completo del hijo usando el apellido del padre
-                String nombreCompletoHijo = nombreHijo + " " + apellidoPadre;
-
-                // Crear un nuevo objeto Persona con datos predeterminados
-                Persona hijoNoEnc = new Persona(nombreCompletoHijo, "unknown", valor.getNombre(), "unknown", "unknown", "unknown", null);
-
-                // Agregar el nuevo hijo al árbol
-                agregarHijo(new Arbol(hijoNoEnc));
-            }
-        }
     }
 
-    // Recursión para los hijos del nodo actual
-    if (primerHijo != null) {
-        primerHijo.validarYCompletarHijos();
+    // Recorrer recursivamente los hijos en preorden
+    Arbol hijo = nodoActual.getPrimerHijo();
+    while (hijo != null) {
+        validarYCompletarHijosPreorden(hijo);
+        hijo = hijo.getHermanoDerecho();
     }
-    if (hermanoDerecho != null) {
-        hermanoDerecho.validarYCompletarHijos();
-    }
-    }
+}
 
     // Método para verificar si un hijo con un nombre dado ya existe en los hijos de este nodo
-    private boolean existeHijo(String nombreHijo) {
-        Arbol actual = primerHijo;
+    private boolean existeHijo(Arbol padre,String nombreHijo) {
+        Arbol actual = padre.primerHijo;
         while (actual != null) {
             // Extraer solo el nombre (primera parte antes del espacio) del nombre completo
             String nombreCompleto = actual.getValor().getNombre();
@@ -191,15 +189,6 @@ public class Arbol {
             actual = actual.hermanoDerecho;
         }
         return false;
-    }
-
-    // Método auxiliar para extraer el apellido del nombre completo
-    private String extraerApellido(String nombreCompleto) {
-        String[] partes = nombreCompleto.split(" ");
-        if (partes.length > 1) {
-            return partes[1]; // Devolver la segunda parte como apellido
-        }
-        return "unknown"; // En caso de que no haya apellido, devolver "unknown"
     }
 }
 

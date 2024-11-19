@@ -6,6 +6,7 @@ package Interfaces;
 
 import EDD.HashTable;
 import Arbol.Arbol;
+import Arbol.Persona;
 import EDD.ListaPersona;
 import LectorJson.LectorJson;
 import java.awt.Dimension;
@@ -14,8 +15,12 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
@@ -25,11 +30,20 @@ import org.graphstream.ui.view.Viewer;
  * @author Diego
  */
 public class Menu extends javax.swing.JFrame {
-    private static Arbol arbol;
+    private Arbol arbol;
     private static File archivo;
     private static Graph familia;
-    private static String mySlylesheet = "node { size: 15px; shape:circle; fill-color:blue; text-size: 20;text-background-color:white; text-background-mode:rounded-box; text-alignment:at-right; shadow-mode: plain; shadow-color: black; shadow-width:5px; shadow-offset: 0px;text-offset: 5px, 5px;}"
-            + "edge { size : 10px; fill-color: black;}";
+    private static String estiloNodo = 
+            "size: 20px; " + 
+            "shape: diamond; " + 
+            "fill-color: blue; " + 
+            "text-size: 20; " +  
+            "text-alignment: at-right; " + 
+            "shadow-mode: plain; " + 
+            "shadow-color: black; " + 
+            "shadow-width: 5px; " + 
+            "shadow-offset: 0px; " + 
+            "text-offset: 5px, 5px;";
     /**
      * Creates new form Menuu
      */
@@ -37,25 +51,16 @@ public class Menu extends javax.swing.JFrame {
         this.setVisible(true);
         initComponents();
         this.setLocationRelativeTo(null);
-        if (arbol==null){
         this.arbol=null;
-        }else{
-            this.arbol=arbol;
-        }
-        if (archivo==null){
         this.archivo=null;
-        }else{
-            this.archivo=archivo;
-        }
         this.setLocationRelativeTo(null);
- 
         }
     
     public Arbol getArbol() {
         return arbol;
     }
 
-    public void setGrafo(Arbol arbol) {
+    public void setArbol(Arbol arbol) {
         this.arbol = arbol;
     }
 
@@ -71,7 +76,6 @@ public class Menu extends javax.swing.JFrame {
         return familia;
     }
     
-
 
 
     /**
@@ -145,9 +149,11 @@ public class Menu extends javax.swing.JFrame {
         ListaPersona personas = new ListaPersona();
         File archivo = LeerJson.LecturaJson(personas);
         setArchivo(archivo);
+        setArbol(null);
         this.arbol=(Arbol.crearArbolDesdeLista(personas));
-        hashtable.putLista(personas);
-        setGrafo(arbol);
+        this.arbol.validarYCompletarHijosPreorden(this.arbol);
+        hashtable.putArbol(this.arbol);
+        setArbol(arbol);
                          
     }//GEN-LAST:event_CargaArchivoActionPerformed
     
@@ -179,13 +185,166 @@ public class Menu extends javax.swing.JFrame {
     */
     
     private void MostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MostrarGrafoActionPerformed
-
+    if (this.arbol==null){
+            JOptionPane.showMessageDialog(null, "No se ha cargado ningun archivo");
+        }
+        else{
+        try{           
+            Graph Familia = new MultiGraph("Familia Real");
+            System.setProperty("org.graphstream.ui", "swing");
+            System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+            setFamilia(Familia);
+            agregarPersonasAlGrafo(getArbol(),getFamilia());
+            crearRelaciones(getFamilia());
+            displayGraph(getFamilia());
+        
+        }
+        catch(Exception err){
+                    JOptionPane.showMessageDialog(null, err);
+            }
+        }
     }//GEN-LAST:event_MostrarGrafoActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+    
+    // Función para agregar un nodo al grafo
+    public static void agregarPersona(Graph grafo, Persona persona) {
+        if (!persona.getNombre().equalsIgnoreCase("No children")){
+            // Crear el nodo con el nombre completo
+            String nombre = persona.getNombre();
+            String numeral = persona.getNumeral();
+            Node nodo = grafo.addNode(nombre+numeral);
 
+            // Asignar el ui.label como "nombre (sin apellido), numeral"
+            String[] nombrediv= persona.getNombre().split(" ");
+            String nombreSinApellido = null;
+            if (nombrediv.length>2){
+                nombreSinApellido = nombrediv[0]+ " " + nombrediv[1];               
+            }
+            else{
+                nombreSinApellido = nombrediv[0];
+            }
+            String uiLabel = (nombreSinApellido + " " + numeral);
+            
+            // Asignar el estilo al nodo
+            nodo.setAttribute("ui.style", estiloNodo);
+            
+            nodo.setAttribute("ui.label", uiLabel);
+
+            // Guardar el objeto Persona como atributo del nodo
+            nodo.setAttribute("persona", persona);
+            
+            // Establecer el estilo para las aristas (si es necesario)
+            String estiloArista = 
+            "size: 20px; " + 
+            "fill-color: black;";
+            //  Asigna el estilo y la arista al nodo
+            grafo.setAttribute("ui.style", "edge {" + estiloArista + "}");
+            
+        }
+    }
+    
+    public void crearRelaciones(Graph grafo) {
+    for (Node nodo : grafo) {
+        // Obtener el objeto Persona del nodo actual con un cast explícito
+        Persona persona = (Persona) nodo.getAttribute("persona");
+
+        // Verificar que no tenga solo "No children"
+        if (persona.getHijos() != null && !persona.getHijos()[0].equals("No children")) {
+            for (String hijoNombre : persona.getHijos()) {
+                Arbol nodoPersona = buscarNodoPorPersona(getArbol(), persona);
+                if (nodoPersona != null){
+                    String hijoH = buscarHijoPorNombre(nodoPersona, hijoNombre);
+                    if (hijoH != null) {                       
+                        // Crear una arista dirigida desde el nodo actual al nodo hijo
+                        String aristaId = nodo.getId() + "-" + hijoNombre;
+                        if (grafo.getEdge(aristaId) == null) {
+                            grafo.addEdge(aristaId, nodo.getId(), hijoH, false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public String buscarHijoPorNombre(Arbol nodoPadre, String nombreHijo) {
+    // Verificar si el nodo padre tiene hijos
+    if (nodoPadre == null || nodoPadre.getPrimerHijo() == null) {
+        return null;  // No hay hijos en este nodo
+    }
+
+    // Recorrer los hijos directos del nodo
+    Arbol hijoActual = nodoPadre.getPrimerHijo();
+    while (hijoActual != null) {
+        // Obtener la persona del hijo y comparar el nombre
+        Persona hijoPersona = hijoActual.getValor();
+        String nombreHijoActual = hijoPersona.getNombre().split(" ")[0]; // Obtener solo el nombre sin apellido
+
+        // Comparar si el nombre del hijo coincide con el nombre pasado
+        if (nombreHijoActual.equals(nombreHijo)) {
+            // Si el nombre coincide, retornar el nombre completo con numeral
+            return hijoPersona.getNombre() + hijoPersona.getNumeral();
+        }
+
+        // Si no, continuar con el siguiente hermano derecho
+        hijoActual = hijoActual.getHermanoDerecho();
+    }
+
+    // Si no se encontró un hijo con ese nombre
+    return null;
+    }
+    
+    public Arbol buscarNodoPorPersona(Arbol nodoActual, Persona personaBuscada) {
+    // Si el nodo actual es null, no hay nada que hacer
+    if (nodoActual == null) {
+        return null;
+    }
+
+    // Obtener la persona del nodo actual
+    Persona personaActual = nodoActual.getValor();
+
+    // Si la persona del nodo actual coincide con la persona buscada, devolver el nodo
+    if (personaActual.getNombre().equals(personaBuscada.getNombre()) && personaActual.getNumeral().equals(personaBuscada.getNumeral()) ) {
+        return nodoActual;
+    }
+
+    // Recursivamente buscar en los hijos del nodo actual
+    Arbol hijoActual = nodoActual.getPrimerHijo();
+    while (hijoActual != null) {
+        Arbol resultado = buscarNodoPorPersona(hijoActual, personaBuscada);
+        if (resultado != null) {
+            return resultado; // Si la persona fue encontrada en algún hijo
+        }
+        hijoActual = hijoActual.getHermanoDerecho(); // Continuar con el siguiente hermano
+    }
+
+    // Si no se encuentra la persona en ningún nodo del árbol, devolver null
+    return null;
+    }
+    
+    public static void agregarPersonasAlGrafo(Arbol nodoActual, Graph grafo) {
+    // Si el nodo actual es null, no hacer nada
+    if (nodoActual == null) {
+        return;
+    }
+
+    // Obtener la persona asociada a este nodo
+    Persona persona = nodoActual.getValor();
+
+    // Llamar a la función para agregar el nodo al grafo
+    agregarPersona(grafo, persona);
+
+    // Recursivamente llamar para agregar los hijos
+    Arbol hijoActual = nodoActual.getPrimerHijo(); // Obtener el primer hijo
+    while (hijoActual != null) {
+        // Llamar recursivamente para agregar el hijo al grafo
+        agregarPersonasAlGrafo(hijoActual, grafo);
+        hijoActual = hijoActual.getHermanoDerecho(); // Pasar al siguiente hermano
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -255,6 +414,20 @@ public class Menu extends javax.swing.JFrame {
      */
     public javax.swing.JPanel getjPanel1() {
         return jPanel1;
+    }
+
+    /**
+     * @param aFamilia the familia to set
+     */
+    public static void setFamilia(Graph aFamilia) {
+        familia = aFamilia;
+    }
+
+    /**
+     * @return the mySlylesheet
+     */
+    public static String getEstiloNodo() {
+        return estiloNodo;
     }
 
     

@@ -59,7 +59,7 @@ public class LectorJson {
                             }
                         } else if (!linea.contains("House") && linea.endsWith(":[") && nombre == null) {
                             // Extraer el nombre eliminando las comillas y el ":[" al final
-                            nombre = linea.substring(1, linea.length() - 2).trim();
+                            nombre = linea.substring(1, linea.length() - 3).trim();
                         }
 
                         // Si todos los atributos han sido leídos, crear y almacenar el objeto Persona

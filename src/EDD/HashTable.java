@@ -4,6 +4,7 @@
  */
 package EDD;
 import Arbol.Persona;
+import Arbol.Arbol;
 /**
  *
  * @author Diego
@@ -46,17 +47,20 @@ public class HashTable {
         size++;
     }
 
-    // Método para agregar una lista de personas con diferentes claves
-    public void putLista(ListaPersona lista) {
-        NodoPersona actual = lista.getCabeza();
-        while (actual != null) {
-            Persona persona = actual.persona;
-            String clave = obtenerClaveDePersona(persona);
+    // Método para agregar las personas de un árbol al HashTable
+    public void putArbol(Arbol arbol) {
+        if (arbol == null) return; // Caso base: si el árbol está vacío, no hacemos nada
 
-            // Usamos la clave de la persona para agregarla al HashTable
-            put(clave, persona);
-            actual = actual.siguiente;
-        }
+        // Agregar el valor actual (Persona) al HashTable
+        Persona persona = arbol.getValor(); // Obtener la persona en el nodo actual
+        String clave = obtenerClaveDePersona(persona); // Generar clave a partir de la persona
+        put(clave, persona); // Agregar al HashTable
+
+        // Recorrer el primer hijo
+        putArbol(arbol.getPrimerHijo());
+
+        // Recorrer el hermano derecho
+        putArbol(arbol.getHermanoDerecho());
     }
 
     // Método para obtener la clave de una persona (por ejemplo, el primer nombre)
