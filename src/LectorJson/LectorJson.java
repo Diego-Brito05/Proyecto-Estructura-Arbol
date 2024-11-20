@@ -40,7 +40,7 @@ public class LectorJson {
                         linea = linea.trim();
 
                         // Verificar y extraer cada atributo necesario
-                        if (linea.contains("\"Of his name\"")) {
+                        if (linea.contains("\"Of his name\"") && numeral==null) {
                             numeral = extraerValor(linea);
                         } else if (linea.contains("\"Born to\"") && padre == null) {
                             padre = extraerValor(linea);
@@ -52,7 +52,7 @@ public class LectorJson {
                             pelo = extraerValor(linea);
                         } else if (linea.contains("\"Father to\"")) {
                             hijos = extraerHijos(br , linea);  // Obtener los nombres de los hijos
-                        } else if (linea.contains("\"Fate\"")) {
+                        } else if (linea.contains("]")) {
                             // Asegurarse de que hijos no sea null si no se encontró antes
                             if (hijos.length<1 && nombre != null) {
                                 hijos = new String[]{"No children"}; // Asignar mensaje indicando que no tiene hijos
@@ -113,17 +113,21 @@ public class LectorJson {
             break;
         } else {
             // Continuar acumulando líneas
+            
             contenidoHijos.append(" ").append(linea);
         }
     }
 
-    // Dividir los nombres de los hijos y devolverlos como un arreglo
     String hijosStr = contenidoHijos.toString().trim();
     if (!hijosStr.isEmpty()) {
         String[] nombresHijos = hijosStr.split(",");
         for (int i = 0; i < nombresHijos.length; i++) {
             // Limpiar cada nombre de comillas y espacios
             nombresHijos[i] = nombresHijos[i].trim().replace("\"", "");
+
+            // Dividir el string en partes y guardar solo lo anterior al espacio
+            String[] partes = nombresHijos[i].split(" ");
+            nombresHijos[i] = partes[0]; // Guarda la primera palabra (antes del espacio)
         }
         return nombresHijos;
     }

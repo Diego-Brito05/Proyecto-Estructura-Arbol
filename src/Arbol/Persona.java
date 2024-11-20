@@ -16,6 +16,7 @@ public class Persona {
     private String ojos;
     private String pelo;
     private String[] hijos;
+    private Integer indice;
     
     public Persona(String nombre,String numeral,String padre, String mote,String ojos, String pelo, String[] hijos) {
         this.nombre = nombre;
