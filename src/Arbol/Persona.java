@@ -15,14 +15,17 @@ public class Persona {
     private String mote;
     private String ojos;
     private String pelo;
+    private String[] hijos;
+    private Integer indice;
     
-    public Persona(String nombre,String numeral,String padre, String mote,String ojos, String pelo) {
+    public Persona(String nombre,String numeral,String padre, String mote,String ojos, String pelo, String[] hijos) {
         this.nombre = nombre;
         this.numeral = numeral;
         this.padre = padre;
         this.mote = mote;
         this.ojos = ojos;
         this.pelo = pelo;
+        this.hijos = hijos;
     }
 
     /**
@@ -66,6 +69,13 @@ public class Persona {
     public String getPelo() {
         return pelo;
     }
-    
+     /**
+     * @return the Hijos
+     */
+    public String[] getHijos() {
+        return hijos;
+    }
     
 }
+    
+
