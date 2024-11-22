@@ -16,7 +16,10 @@ import EDD.ListaPersona;
  */
 public class LectorJson {
 
-
+/* Esta funcion se encarga de revisar si es un archivo.json, en el caso que lo sea revisa en cada linea si esta guardado la informacion en el formato adecuado,
+    cuando encuentra los atributos necesarios para crear a una persona, crea la persona, la agrega a una lista de personas y devuelve a null todos las variables en las que se guarda la informacion
+    de cada persona, al final retorna el archivo .json    
+    */
  public File LecturaJson(ListaPersona listaPersonas) {
         // Crear JFileChooser
         JFileChooser jfc = new JFileChooser();
@@ -33,7 +36,7 @@ public class LectorJson {
             if (archivo.getName().toLowerCase().endsWith(".json")) {
                 try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
                     String linea;
-                    String nombre = null, numeral = null, padre = null, mote = null, ojos = null, pelo = null;
+                    String nombre = null, numeral = null, padre = null, mote = null,titulo=null, ojos = null, pelo = null;
                     String[] hijos = new String[0];  // Inicializamos como arreglo vacío
 
                     while ((linea = br.readLine()) != null) {
@@ -46,6 +49,8 @@ public class LectorJson {
                             padre = extraerValor(linea);
                         } else if (linea.contains("\"Known throughout as\"")) {
                             mote = extraerValor(linea);
+                        }else if (linea.contains("\"Held title\"")) {
+                           titulo = extraerValor(linea);                       
                         } else if (linea.contains("\"Of eyes\"")) {
                             ojos = extraerValor(linea);
                         } else if (linea.contains("\"Of hair\"")) {
@@ -66,9 +71,12 @@ public class LectorJson {
                         if (nombre != null && numeral != null && padre != null && ojos != null && pelo != null && hijos.length >= 1) {
                             // Verificar y completar si falta mote
                             if (mote == null) {
-                                mote = "unknown";
+                                mote = "unknown";                              
                             }
-                            Persona persona = new Persona(nombre, numeral, padre, mote, ojos, pelo, hijos);
+                            if (titulo == null) {
+                                titulo = "unknown";                              
+                            }
+                            Persona persona = new Persona(nombre, numeral, padre, mote,titulo, ojos, pelo, hijos);
                             listaPersonas.agregar(persona); // Agregar el objeto Persona a la ListaPersona
 
                             // Restablecer los valores para la siguiente persona
@@ -96,7 +104,8 @@ public class LectorJson {
         int fin = linea.lastIndexOf("\"");
         return linea.substring(inicio, fin);
     }
-
+    //Metodo auxiliar en el que se validan todas las lineas que cumplan con la condicion de ser atributos hijos, para luego guardarlos en un arreglo de strings 
+    //y luego retornarlos a la funcion principal
    private String[] extraerHijos(BufferedReader br, String primeraLinea) throws IOException {
     StringBuilder contenidoHijos = new StringBuilder();
 

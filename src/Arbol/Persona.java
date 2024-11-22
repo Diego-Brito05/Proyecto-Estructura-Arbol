@@ -13,16 +13,18 @@ public class Persona {
     private String numeral;
     private String padre;
     private String mote;
+    private String titulo;
     private String ojos;
     private String pelo;
     private String[] hijos;
-    private Integer indice;
     
-    public Persona(String nombre,String numeral,String padre, String mote,String ojos, String pelo, String[] hijos) {
+    
+    public Persona(String nombre,String numeral,String padre, String mote,String titulo,String ojos, String pelo, String[] hijos) {
         this.nombre = nombre;
         this.numeral = numeral;
         this.padre = padre;
         this.mote = mote;
+        this.titulo = titulo;
         this.ojos = ojos;
         this.pelo = pelo;
         this.hijos = hijos;
@@ -75,6 +77,14 @@ public class Persona {
     public String[] getHijos() {
         return hijos;
     }
+
+    /**
+     * @param hijos the hijos to set
+     */
+    public void setHijos(String[] hijos) {
+        this.hijos = hijos;
+    }
+    
     
 }
     

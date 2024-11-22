@@ -12,8 +12,6 @@ import LectorJson.LectorJson;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,6 +51,7 @@ public class Menu extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.arbol=null;
         this.archivo=null;
+        this.familia=null;
         this.setLocationRelativeTo(null);
         }
     
@@ -154,6 +153,7 @@ public class Menu extends javax.swing.JFrame {
         this.arbol.validarYCompletarHijosPreorden(this.arbol);
         hashtable.putArbol(this.arbol);
         setArbol(arbol);
+        JOptionPane.showMessageDialog(null, "Se ha cargado el archivo");
                          
     }//GEN-LAST:event_CargaArchivoActionPerformed
     
@@ -209,15 +209,17 @@ public class Menu extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
     
-    // Función para agregar un nodo al grafo
+    // Función para agregar un nodo al grafo, guardando en un de sus atributo el objeto Persona de cada uno
     public static void agregarPersona(Graph grafo, Persona persona) {
         if (!persona.getNombre().equalsIgnoreCase("No children")){
             // Crear el nodo con el nombre completo
             String nombre = persona.getNombre();
             String numeral = persona.getNumeral();
-            Node nodo = grafo.addNode(nombre+numeral);
+            String mote = persona.getMote();
+            Node nodo = grafo.addNode(nombre+numeral+mote);
 
             // Asignar el ui.label como "nombre (sin apellido), numeral"
+            String uiLabel = null;
             String[] nombrediv= persona.getNombre().split(" ");
             String nombreSinApellido = null;
             if (nombrediv.length>2){
@@ -226,7 +228,12 @@ public class Menu extends javax.swing.JFrame {
             else{
                 nombreSinApellido = nombrediv[0];
             }
-            String uiLabel = (nombreSinApellido + " " + numeral);
+            if (esNumerico(numeral)){
+                uiLabel = (nombreSinApellido);
+            }
+            else{
+                uiLabel = (nombreSinApellido + " " + numeral);
+            }
             
             // Asignar el estilo al nodo
             nodo.setAttribute("ui.style", estiloNodo);
@@ -245,7 +252,8 @@ public class Menu extends javax.swing.JFrame {
             
         }
     }
-    
+    /*Esta funcion se encarga de al recibir un graph con los nodos ya creados, revisa su atributo persona y busca el Id asociado a su nodo para despues buscar el nodo de sus hijos 
+        y hacer una arista entre ellos.    */
     public void crearRelaciones(Graph grafo) {
     for (Node nodo : grafo) {
         // Obtener el objeto Persona del nodo actual con un cast explícito
@@ -259,9 +267,10 @@ public class Menu extends javax.swing.JFrame {
                     String hijoH = buscarHijoPorNombre(nodoPersona, hijoNombre);
                     if (hijoH != null) {                       
                         // Crear una arista dirigida desde el nodo actual al nodo hijo
-                        String aristaId = nodo.getId() + "-" + hijoNombre;
+                        String nodoId= nodo.getId();
+                        String aristaId = nodoId + "-" + hijoNombre;                       
                         if (grafo.getEdge(aristaId) == null) {
-                            grafo.addEdge(aristaId, nodo.getId(), hijoH, false);
+                            grafo.addEdge(aristaId, nodoId, hijoH, true);
                             }
                         }
                     }
@@ -269,6 +278,8 @@ public class Menu extends javax.swing.JFrame {
             }
         }
     }
+    //Al recibir un nombre y pasarle el nodo de su padre, se encarga de buscar en cada uno de sus hijos para ver si el nombre coincide con el buscado, si es asi 
+    //retorna un string de el nombre de la persona mas el numeral mas el mote, el cual es la forma en la que se guardan los Id de cada nodo
     public String buscarHijoPorNombre(Arbol nodoPadre, String nombreHijo) {
     // Verificar si el nodo padre tiene hijos
     if (nodoPadre == null || nodoPadre.getPrimerHijo() == null) {
@@ -285,7 +296,7 @@ public class Menu extends javax.swing.JFrame {
         // Comparar si el nombre del hijo coincide con el nombre pasado
         if (nombreHijoActual.equals(nombreHijo)) {
             // Si el nombre coincide, retornar el nombre completo con numeral
-            return hijoPersona.getNombre() + hijoPersona.getNumeral();
+            return hijoPersona.getNombre() + hijoPersona.getNumeral() +hijoPersona.getMote();
         }
 
         // Si no, continuar con el siguiente hermano derecho
@@ -296,6 +307,9 @@ public class Menu extends javax.swing.JFrame {
     return null;
     }
     
+    /*Esta funcion se encarga de revisar en un arbol si la perosna buscada se encuentra en este arbol, revisando si su nombre y numeral coincide, en caso de que coincidan
+    retorna el nodo del arbol en el que esta guardado de esa persona    
+    */
     public Arbol buscarNodoPorPersona(Arbol nodoActual, Persona personaBuscada) {
     // Si el nodo actual es null, no hay nada que hacer
     if (nodoActual == null) {
@@ -324,6 +338,7 @@ public class Menu extends javax.swing.JFrame {
     return null;
     }
     
+    //funcion que se encarga de recorrer todo el arbol y en cada nodo no nulo de el llama a la funcion agregarPersonas
     public static void agregarPersonasAlGrafo(Arbol nodoActual, Graph grafo) {
     // Si el nodo actual es null, no hacer nada
     if (nodoActual == null) {
@@ -429,7 +444,14 @@ public class Menu extends javax.swing.JFrame {
     public static String getEstiloNodo() {
         return estiloNodo;
     }
-
+    public static boolean esNumerico(String str) {
+    try {
+        Integer.parseInt(str.trim()); // Para números enteros
+        return true;
+    } catch (NumberFormatException e) {
+        return false;
+    }
+}
     
     
 }
