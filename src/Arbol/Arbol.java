@@ -77,6 +77,9 @@ public class Arbol {
             hermanoDerecho.recorrerPostorden();
         }
     }
+    
+        /*Esta funcion se encarga de leer cada elemento de una lista de personas, para luego agregarlos si encuentra a su atributo padre dentro del arbol, siempre toma como raiz al primer 
+        elemento de la lista, si el padre no se encuentra en el arbol, el elemento no se agrega al mismo, al final retorna la raiz del arbol.*/
         public static Arbol crearArbolDesdeLista(ListaPersona listaPersonas) {
         
 
@@ -100,9 +103,13 @@ public class Arbol {
             if (nodoPadre == null) {
                 throw new IllegalStateException("No se encontró el nodo padre: " + padreInfo);
             }
+            // Crear el nuevo nodo y agregarlo como hijo
             Arbol nuevoNodo = new Arbol(personaActual);
             nodoPadre.agregarHijo(nodoPadre , nuevoNodo);
-
+            
+             // Verificar y actualizar el atributo Hijos del padre
+            actualizarHijos(nodoPadre.getValor(), personaActual);
+        
             actual = actual.siguiente; // Avanzamos al siguiente nodo
         }      
         return raiz; // Devolvemos la raíz del árbol
@@ -136,8 +143,37 @@ public class Arbol {
     // Si no se encuentra, retornar null
     return null;
     }
-    
+    // Función auxiliar para actualizar el atributo Hijos del padre, si no tiene a uno de sus hijos del arbol en su atributo hijos, se añade al mismo
+    private static void actualizarHijos(Persona padre, Persona hijo) {
+        String nombreHijoSinApellido = hijo.getNombre().split(" ")[0]; // Extraer el nombre sin apellido
 
+        // Verificar si el nombre del hijo ya está en el atributo Hijos
+        if (padre.getHijos() == null || !contieneHijo(padre.getHijos(), nombreHijoSinApellido)) {
+            // Agregar el nombre del hijo al atributo Hijos
+            String[] nuevosHijos;
+            if (padre.getHijos() == null) {
+                nuevosHijos = new String[]{nombreHijoSinApellido};
+            } else {
+                nuevosHijos = new String[padre.getHijos().length + 1];
+                System.arraycopy(padre.getHijos(), 0, nuevosHijos, 0, padre.getHijos().length);
+                nuevosHijos[nuevosHijos.length - 1] = nombreHijoSinApellido;
+            }
+            padre.setHijos(nuevosHijos);
+        }
+    }
+
+    // Función auxiliar para verificar si un nombre está en el arreglo Hijos
+    private static boolean contieneHijo(String[] hijos, String nombreHijo) {
+        for (String hijo : hijos) {
+            if (hijo.equals(nombreHijo) ) {
+                return true; // El nombre del hijo ya está presente
+            }
+        }
+        return false; // El nombre del hijo no está presente
+    }
+    
+    // Esta funcion se encarga de al recibir un arbol revisa el atributo hijo de todos los nods y se asegura de que cada hijo del atributo
+    // se encuentre en los hijos directos del arbol.
     public void validarYCompletarHijosPreorden(Arbol nodoActual) {
     if (nodoActual == null) {
         return;
@@ -152,9 +188,10 @@ public class Arbol {
                 // Si no está, crear una nueva Persona con valores desconocidos
                 Persona hijoNoEnc = new Persona(
                     nombreHijo,
-                    " ",
+                    generarNumeralUnico(), // Generar un numeral único,
                     persona.getNombre(), // El padre es el nodo actual
                     "unknown",
+                    "unknown",    
                     "unknown",
                     "unknown",
                     null
@@ -189,6 +226,13 @@ public class Arbol {
             actual = actual.hermanoDerecho;
         }
         return false;
+    }
+        // Variable estática para garantizar la unicidad de los numerales
+    private static int contadorNumerales = 1;
+
+    // Método para generar un numeral único
+    private static String generarNumeralUnico() {
+        return " " + (contadorNumerales++);
     }
 }
 

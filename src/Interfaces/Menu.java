@@ -12,12 +12,9 @@ import LectorJson.LectorJson;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -25,7 +22,6 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.layout.*;
 
 /**
  *
@@ -55,6 +51,7 @@ public class Menu extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.arbol=null;
         this.archivo=null;
+        this.familia=null;
         this.setLocationRelativeTo(null);
         }
     
@@ -93,6 +90,9 @@ public class Menu extends javax.swing.JFrame {
         MostrarGrafo = new javax.swing.JButton();
         CargaArchivo = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        Mant = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        BuscarAntepasados = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,7 +106,7 @@ public class Menu extends javax.swing.JFrame {
                 MostrarGrafoActionPerformed(evt);
             }
         });
-        jPanel1.add(MostrarGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 390, 280, -1));
+        jPanel1.add(MostrarGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 280, -1));
 
         CargaArchivo.setBackground(new java.awt.Color(153, 51, 255));
         CargaArchivo.setText("CARGAR ARCHIVO");
@@ -115,7 +115,7 @@ public class Menu extends javax.swing.JFrame {
                 CargaArchivoActionPerformed(evt);
             }
         });
-        jPanel1.add(CargaArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 340, 280, -1));
+        jPanel1.add(CargaArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 280, -1));
 
         jButton1.setBackground(new java.awt.Color(153, 51, 255));
         jButton1.setText("X");
@@ -125,6 +125,20 @@ public class Menu extends javax.swing.JFrame {
             }
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 480, 90, 20));
+        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 60, 120, -1));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setText("Mostrar Antepasados");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 30, -1, -1));
+
+        BuscarAntepasados.setBackground(new java.awt.Color(153, 51, 255));
+        BuscarAntepasados.setText("Buacar Antepasados");
+        BuscarAntepasados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BuscarAntepasadosActionPerformed(evt);
+            }
+        });
+        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -156,10 +170,11 @@ public class Menu extends javax.swing.JFrame {
         this.arbol.validarYCompletarHijosPreorden(this.arbol);
         hashtable.putArbol(this.arbol);
         setArbol(arbol);
+        JOptionPane.showMessageDialog(null, "Se ha cargado el archivo");
                          
     }//GEN-LAST:event_CargaArchivoActionPerformed
     
-public void displayGraph(Graph graph2) {
+    public void displayGraph(Graph graph2) {
     // Crear la ventana para mostrar el grafo
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -244,31 +259,6 @@ public void displayGraph(Graph graph2) {
         }
     });
 }
-
-            
-        private boolean isNodeClicked(Node node, int x, int y, ViewPanel viewPanel) {
-    // Verificar si el nodo tiene atributos 'x' e 'y'
-    if (node.hasAttribute("x") && node.hasAttribute("y")) {
-        // Obtener las coordenadas como Double
-        double nodeX = (Double) node.getAttribute("x");
-        double nodeY = (Double) node.getAttribute("y");
-
-        // Radio estimado del nodo (ajusta según sea necesario)
-        double nodeRadius = 20;
-
-        // Calcular la distancia entre el clic y el centro del nodo
-        double distance = Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
-
-        // Si la distancia es menor que el radio del nodo, significa que se hizo clic en el nodo
-        return distance < nodeRadius;
-    }
-
-    return false;  // Si no tiene atributos de coordenadas, no se hizo clic en el nodo
-}
-
-
-
-
     
     /*
     Este metodo se encarga de crear el grafo con la libreria graphstream para luego ser mostrado
@@ -287,7 +277,6 @@ public void displayGraph(Graph graph2) {
             setFamilia(Familia);
             agregarPersonasAlGrafo(getArbol(),getFamilia());
             crearRelaciones(getFamilia());
-             
             displayGraph(getFamilia());
         
         }
@@ -300,16 +289,100 @@ public void displayGraph(Graph graph2) {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void BuscarAntepasadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarAntepasadosActionPerformed
+        // TODO add your handling code here:
+        String ante = Mant.getText();
+        // Buscar la persona en el árbol genealógico
+    Persona personaBuscada = buscarPersonaPorNombrePer(ante);
     
-    // Función para agregar un nodo al grafo
+    if (personaBuscada == null) {
+        JOptionPane.showMessageDialog(null, "Persona no encontrada.");
+        return;
+    }
+
+    // Crear un nuevo grafo para mostrar los antepasados
+    Graph grafoAntepasados = new MultiGraph("Antepasados de " + ante);
+    grafoAntepasados.setAttribute("ui.stylesheet", "node { fill-color: blue; size: 20px; }");
+
+    // Recursivamente agregar a la persona y sus antepasados al grafo
+    agregarAntepasadosAlGrafo(personaBuscada, grafoAntepasados, null);
+
+    // Mostrar el grafo
+    displayGraph(grafoAntepasados);
+    }//GEN-LAST:event_BuscarAntepasadosActionPerformed
+    
+    private Persona buscarPersonaPorNombrePer(String nombre) {
+    // Aquí debes implementar la lógica para buscar a la persona en el árbol
+    // Puedes usar un recorrido en el árbol para encontrar la persona
+    // Ejemplo:
+    return buscarPersonaEnArbol(getArbol(), nombre);
+}
+    
+    private Persona buscarPersonaEnArbol(Arbol nodoActual, String nombre) {
+    // Si el nodo actual es null, no hay nada que hacer
+    if (nodoActual == null) {
+        return null;
+    }
+
+    // Obtener la persona del nodo actual
+    Persona personaActual = nodoActual.getValor();
+
+    // Verificar si el nombre de la persona actual coincide con el nombre buscado
+    if (personaActual.getNombre().equalsIgnoreCase(nombre)) {
+        return personaActual; // Si coincide, retornar la persona
+    }
+
+    // Recursivamente buscar en los hijos
+    Arbol hijoActual = nodoActual.getPrimerHijo(); // Obtener el primer hijo
+    while (hijoActual != null) {
+        Persona resultado = buscarPersonaEnArbol(hijoActual, nombre);
+        if (resultado != null) {
+            return resultado; // Si se encontró en algún hijo, retornar el resultado
+        }
+        hijoActual = hijoActual.getHermanoDerecho(); // Continuar con el siguiente hermano
+    }
+
+    // Si no se encontró la persona en ningún nodo del árbol, devolver null
+    return null;
+}
+    
+    private void agregarAntepasadosAlGrafo(Persona persona, Graph grafo, Node padre) {
+    if (persona == null) {
+        return;  // Si la persona no existe, detener la recursión
+    }
+
+    // Crear el nodo para la persona
+    String nodoId = persona.getNombre() + persona.getNumeral();
+    Node nodo = grafo.addNode(nodoId);
+    nodo.setAttribute("ui.label", persona.getNombre() + " " + persona.getNumeral());
+
+    // Si tiene un padre, crear una arista entre el nodo actual y el padre
+    if (padre != null) {
+        grafo.addEdge(padre.getId() + "-" + nodoId, padre.getId(), nodoId);
+    }
+
+    // Obtener el padre de la persona y continuar recursivamente
+    Arbol nodoPadre = buscarNodoPorPersona(getArbol(), persona);
+    if (nodoPadre != null) {
+        Persona padrePersona = nodoPadre.getValor(); // Asumiendo que el valor es la persona
+        if (padrePersona != null) {
+            agregarAntepasadosAlGrafo(padrePersona, grafo, nodo);
+        }
+    }
+}
+    
+    // Función para agregar un nodo al grafo, guardando en un de sus atributo el objeto Persona de cada uno
     public static void agregarPersona(Graph grafo, Persona persona) {
         if (!persona.getNombre().equalsIgnoreCase("No children")){
             // Crear el nodo con el nombre completo
             String nombre = persona.getNombre();
             String numeral = persona.getNumeral();
-            Node nodo = grafo.addNode(nombre+numeral);
+            String mote = persona.getMote();
+            Node nodo = grafo.addNode(nombre+numeral+mote);
 
             // Asignar el ui.label como "nombre (sin apellido), numeral"
+            String uiLabel = null;
             String[] nombrediv= persona.getNombre().split(" ");
             String nombreSinApellido = null;
             if (nombrediv.length>2){
@@ -318,13 +391,18 @@ public void displayGraph(Graph graph2) {
             else{
                 nombreSinApellido = nombrediv[0];
             }
-            String uiLabel = (nombreSinApellido + " " + numeral);
+            if (esNumerico(numeral)){
+                uiLabel = (nombreSinApellido);
+            }
+            else{
+                uiLabel = (nombreSinApellido + " " + numeral);
+            }
             
             // Asignar el estilo al nodo
             nodo.setAttribute("ui.style", estiloNodo);
             
             nodo.setAttribute("ui.label", uiLabel);
-            
+
             nodo.setAttribute("Pclick", false);
 
             // Guardar el objeto Persona como atributo del nodo
@@ -333,13 +411,14 @@ public void displayGraph(Graph graph2) {
             // Establecer el estilo para las aristas (si es necesario)
             String estiloArista = 
             "size: 20px; " + 
-            "fill-color: red;";
+            "fill-color: black;";
             //  Asigna el estilo y la arista al nodo
-            grafo.setAttribute("ui.style", "edge {"+ estiloArista +"}");
+            grafo.setAttribute("ui.style", "edge {" + estiloArista + "}");
             
         }
     }
-    
+    /*Esta funcion se encarga de al recibir un graph con los nodos ya creados, revisa su atributo persona y busca el Id asociado a su nodo para despues buscar el nodo de sus hijos 
+        y hacer una arista entre ellos.    */
     public void crearRelaciones(Graph grafo) {
     for (Node nodo : grafo) {
         // Obtener el objeto Persona del nodo actual con un cast explícito
@@ -353,9 +432,10 @@ public void displayGraph(Graph graph2) {
                     String hijoH = buscarHijoPorNombre(nodoPersona, hijoNombre);
                     if (hijoH != null) {                       
                         // Crear una arista dirigida desde el nodo actual al nodo hijo
-                        String aristaId = nodo.getId() + "-" + hijoNombre;
+                        String nodoId= nodo.getId();
+                        String aristaId = nodoId + "-" + hijoNombre;                       
                         if (grafo.getEdge(aristaId) == null) {
-                            grafo.addEdge(aristaId, nodo.getId(), hijoH, false);
+                            grafo.addEdge(aristaId, nodoId, hijoH, true);
                             }
                         }
                     }
@@ -363,6 +443,8 @@ public void displayGraph(Graph graph2) {
             }
         }
     }
+    //Al recibir un nombre y pasarle el nodo de su padre, se encarga de buscar en cada uno de sus hijos para ver si el nombre coincide con el buscado, si es asi 
+    //retorna un string de el nombre de la persona mas el numeral mas el mote, el cual es la forma en la que se guardan los Id de cada nodo
     public String buscarHijoPorNombre(Arbol nodoPadre, String nombreHijo) {
     // Verificar si el nodo padre tiene hijos
     if (nodoPadre == null || nodoPadre.getPrimerHijo() == null) {
@@ -379,7 +461,7 @@ public void displayGraph(Graph graph2) {
         // Comparar si el nombre del hijo coincide con el nombre pasado
         if (nombreHijoActual.equals(nombreHijo)) {
             // Si el nombre coincide, retornar el nombre completo con numeral
-            return hijoPersona.getNombre() + hijoPersona.getNumeral();
+            return hijoPersona.getNombre() + hijoPersona.getNumeral() +hijoPersona.getMote();
         }
 
         // Si no, continuar con el siguiente hermano derecho
@@ -390,6 +472,9 @@ public void displayGraph(Graph graph2) {
     return null;
     }
     
+    /*Esta funcion se encarga de revisar en un arbol si la perosna buscada se encuentra en este arbol, revisando si su nombre y numeral coincide, en caso de que coincidan
+    retorna el nodo del arbol en el que esta guardado de esa persona    
+    */
     public Arbol buscarNodoPorPersona(Arbol nodoActual, Persona personaBuscada) {
     // Si el nodo actual es null, no hay nada que hacer
     if (nodoActual == null) {
@@ -418,6 +503,7 @@ public void displayGraph(Graph graph2) {
     return null;
     }
     
+    //funcion que se encarga de recorrer todo el arbol y en cada nodo no nulo de el llama a la funcion agregarPersonas
     public static void agregarPersonasAlGrafo(Arbol nodoActual, Graph grafo) {
     // Si el nodo actual es null, no hacer nada
     if (nodoActual == null) {
@@ -476,9 +562,12 @@ public void displayGraph(Graph graph2) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BuscarAntepasados;
     private javax.swing.JButton CargaArchivo;
+    private javax.swing.JTextField Mant;
     private javax.swing.JButton MostrarGrafo;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
@@ -523,8 +612,14 @@ public void displayGraph(Graph graph2) {
     public static String getEstiloNodo() {
         return estiloNodo;
     }
-
-    
+    public static boolean esNumerico(String str) {
+    try {
+        Integer.parseInt(str.trim()); // Para números enteros
+        return true;
+    } catch (NumberFormatException e) {
+        return false;
+    }
+}
     
     
 }

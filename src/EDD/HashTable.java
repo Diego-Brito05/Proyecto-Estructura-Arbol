@@ -63,9 +63,9 @@ public class HashTable {
         putArbol(arbol.getHermanoDerecho());
     }
 
-    // Método para obtener la clave de una persona (por ejemplo, el primer nombre)
+    // Método para obtener la clave de una persona (el primer nombre)
     private String obtenerClaveDePersona(Persona persona) {
-        // Suponiendo que la clave es el primer nombre (antes de la coma)
+        // Suponiendo que la clave es el primer nombre 
         String[] partes = persona.getNombre().split(" ");
         return partes[0];  // Primer nombre
     }
@@ -93,7 +93,7 @@ public class HashTable {
     public int size() {
         return size;
     }
-
+    //verifica si la clave que se esta pasando como parametro se encuntra en el HashTable y retona un booleano
     public boolean containsKey(String clave) {
         int indice = hash(clave);
         return tabla[indice] != null && clave.equals(claves[indice]);
