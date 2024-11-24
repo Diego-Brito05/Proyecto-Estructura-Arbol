@@ -29,21 +29,20 @@ public class HashTable {
     public void put(String clave, Persona persona) {
         int indice = hash(clave);
 
-        // Si no hay lista en el índice, creamos una nueva y guardamos la clave
+        // Buscar un índice disponible usando sondeo lineal
+        while (tabla[indice] != null && !clave.equals(claves[indice])) {
+            // Si la clave es diferente, avanzamos al siguiente índice
+            indice = (indice + 1) % tabla.length; // Cicla al inicio si llega al final
+        }
+
+        // Si encontramos un índice vacío, inicializamos la lista y almacenamos la clave
         if (tabla[indice] == null) {
             tabla[indice] = new ListaPersona();
-            claves[indice] = clave;  // Guardamos la clave en el arreglo de claves
+            claves[indice] = clave;
         }
 
-        // Si las claves coinciden, agregamos la persona al final de la lista
-        if (clave.equals(claves[indice])) {
-            tabla[indice].agregar(persona);  // Agrega al final de la lista
-        } else {
-            // Si hay colisión con una clave diferente, mostramos un mensaje y no hacemos nada
-            System.out.println("Colisión detectada para la clave: " + clave);
-            return;
-        }
-
+        // Agregamos la persona a la lista en el índice calculado
+        tabla[indice].agregar(persona);
         size++;
     }
 

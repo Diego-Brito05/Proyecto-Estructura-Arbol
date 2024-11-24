@@ -19,11 +19,9 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
-
 
 /**
  *
@@ -108,7 +106,7 @@ public class Menu extends javax.swing.JFrame {
                 MostrarGrafoActionPerformed(evt);
             }
         });
-        jPanel1.add(MostrarGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 280, -1));
+        jPanel1.add(MostrarGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 390, 280, -1));
 
         CargaArchivo.setBackground(new java.awt.Color(153, 51, 255));
         CargaArchivo.setText("CARGAR ARCHIVO");
@@ -117,7 +115,7 @@ public class Menu extends javax.swing.JFrame {
                 CargaArchivoActionPerformed(evt);
             }
         });
-        jPanel1.add(CargaArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 280, -1));
+        jPanel1.add(CargaArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 350, 280, -1));
 
         jButton1.setBackground(new java.awt.Color(153, 51, 255));
         jButton1.setText("X");
@@ -127,20 +125,20 @@ public class Menu extends javax.swing.JFrame {
             }
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 480, 90, 20));
-        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 60, 120, -1));
+        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 50, 150, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Mostrar Antepasados");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 30, -1, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
 
-        BuscarAntepasados.setBackground(new java.awt.Color(153, 51, 255));
-        BuscarAntepasados.setText("Buacar Antepasados");
+        BuscarAntepasados.setText("Buscar");
+        BuscarAntepasados.setToolTipText("");
         BuscarAntepasados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BuscarAntepasadosActionPerformed(evt);
             }
         });
-        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, -1, -1));
+        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -176,6 +174,9 @@ public class Menu extends javax.swing.JFrame {
                          
     }//GEN-LAST:event_CargaArchivoActionPerformed
     
+    /*
+    Esta funcion se encarga de crear un Jpanel, para luego añadirlo a un SwingViewer que tiene el grafo para luego mostrarlo
+    */
     public void displayGraph(Graph graph2) {
     // Crear la ventana para mostrar el grafo
     JFrame frame = new JFrame();
@@ -283,8 +284,6 @@ public class Menu extends javax.swing.JFrame {
             agregarPersonasAlGrafo(getArbol(),getFamilia());
             crearRelaciones(getFamilia());
             displayGraph(getFamilia());
-             
-            
         
         }
         catch(Exception err){
@@ -299,34 +298,77 @@ public class Menu extends javax.swing.JFrame {
 
     private void BuscarAntepasadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarAntepasadosActionPerformed
         // TODO add your handling code here:
-        String ante = Mant.getText();
-        // Buscar la persona en el árbol genealógico
+         String ante = Mant.getText();
+
+    // Buscar la persona en el árbol genealógico
     Persona personaBuscada = buscarPersonaPorNombrePer(ante);
-    
+
     if (personaBuscada == null) {
         JOptionPane.showMessageDialog(null, "Persona no encontrada.");
         return;
     }
 
+    // Llamar al método que se encarga de crear el grafo y agregar los antepasados
+    agregarAntepasadosAlGrafo(personaBuscada, ante);
+    }//GEN-LAST:event_BuscarAntepasadosActionPerformed
+    
+     private void agregarAntepasadosAlGrafo(Persona persona, String ante) {
     // Crear un nuevo grafo para mostrar los antepasados
     Graph grafoAntepasados = new MultiGraph("Antepasados de " + ante);
     grafoAntepasados.setAttribute("ui.stylesheet", "node { fill-color: blue; size: 20px; }");
 
-    // Recursivamente agregar a la persona y sus antepasados al grafo
-    agregarAntepasadosAlGrafo(personaBuscada, grafoAntepasados, null);
+    // Crear el HashTable para almacenar las personas procesadas
+    HashTable personasProcesadas = new HashTable();
 
-    // Mostrar el grafo
-    grafoAntepasados.display();
-    }//GEN-LAST:event_BuscarAntepasadosActionPerformed
+    // Recursivamente agregar a la persona y sus antepasados directos al grafo
+    agregarAntepasadosAlGrafoRecursivo(persona, grafoAntepasados, null, personasProcesadas);
+
+    // Mostrar el grafo en una nueva ventana
+    displayGraph(grafoAntepasados);
+}
+
+private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, Node padre, HashTable personasProcesadas) {
+    if (persona == null) return;  // Si la persona no existe, detener la recursión
+
+    // Crear un identificador único para este nodo basado en la persona
+    String nodoId = persona.getNombre() + persona.getNumeral();
+
+    // Verificar si esta persona ya ha sido procesada
+    if (personasProcesadas.containsKey(nodoId)) {
+        return;  // Si ya fue procesada, detener la recursión
+    }
+
+    // Marcar esta persona como procesada
+    personasProcesadas.put(nodoId, persona);
+
+    // Crear el nodo si no existe
+    if (grafo.getNode(nodoId) == null) {
+        Node nodo = grafo.addNode(nodoId);
+        nodo.setAttribute("ui.label", persona.getNombre() + " " + persona.getNumeral());
+    }
+
+    // Si existe un padre, agregar una arista entre el padre y este nodo
+    if (padre != null) {
+        String edgeId = padre.getId() + "-" + nodoId;
+        if (grafo.getEdge(edgeId) == null) {
+            grafo.addEdge(edgeId, padre.getId(), nodoId);
+        }
+    }
+}
     
     private Persona buscarPersonaPorNombrePer(String nombre) {
     // Aquí debes implementar la lógica para buscar a la persona en el árbol
     // Puedes usar un recorrido en el árbol para encontrar la persona
-    // Ejemplo:
-    return buscarPersonaEnArbol(getArbol(), nombre);
+    Persona persona = buscarPersonaEnArbol(getArbol(), nombre);
+    if (persona != null) {
+        System.out.println("Persona encontrada: " + persona.getNombre()); // Log de depuración
+    } else {
+        System.out.println("Persona no encontrada: " + nombre); // Log de depuración
+    }
+    return persona;
 }
     
-    private Persona buscarPersonaEnArbol(Arbol nodoActual, String nombre) {
+     private Persona buscarPersonaEnArbol(Arbol nodoActual, String nombre) {
     // Si el nodo actual es null, no hay nada que hacer
     if (nodoActual == null) {
         return null;
@@ -352,31 +394,6 @@ public class Menu extends javax.swing.JFrame {
 
     // Si no se encontró la persona en ningún nodo del árbol, devolver null
     return null;
-}
-    
-    private void agregarAntepasadosAlGrafo(Persona persona, Graph grafo, Node padre) {
-    if (persona == null) {
-        return;  // Si la persona no existe, detener la recursión
-    }
-
-    // Crear el nodo para la persona
-    String nodoId = persona.getNombre() + persona.getNumeral();
-    Node nodo = grafo.addNode(nodoId);
-    nodo.setAttribute("ui.label", persona.getNombre() + " " + persona.getNumeral());
-
-    // Si tiene un padre, crear una arista entre el nodo actual y el padre
-    if (padre != null) {
-        grafo.addEdge(padre.getId() + "-" + nodoId, padre.getId(), nodoId);
-    }
-
-    // Obtener el padre de la persona y continuar recursivamente
-    Arbol nodoPadre = buscarNodoPorPersona(getArbol(), persona);
-    if (nodoPadre != null) {
-        Persona padrePersona = nodoPadre.getValor(); // Asumiendo que el valor es la persona
-        if (padrePersona != null) {
-            agregarAntepasadosAlGrafo(padrePersona, grafo, nodo);
-        }
-    }
 }
     
     // Función para agregar un nodo al grafo, guardando en un de sus atributo el objeto Persona de cada uno
@@ -410,8 +427,6 @@ public class Menu extends javax.swing.JFrame {
             
             nodo.setAttribute("ui.label", uiLabel);
 
-            nodo.setAttribute("Pclick", false);
-
             // Guardar el objeto Persona como atributo del nodo
             nodo.setAttribute("persona", persona);
             
@@ -436,13 +451,20 @@ public class Menu extends javax.swing.JFrame {
             for (String hijoNombre : persona.getHijos()) {
                 Arbol nodoPersona = buscarNodoPorPersona(getArbol(), persona);
                 if (nodoPersona != null){
-                    String hijoH = buscarHijoPorNombre(nodoPersona, hijoNombre);
-                    if (hijoH != null) {                       
-                        // Crear una arista dirigida desde el nodo actual al nodo hijo
-                        String nodoId= nodo.getId();
-                        String aristaId = nodoId + "-" + hijoNombre;                       
+                    String[] hijoH = buscarHijosPorNombre(nodoPersona, hijoNombre);
+                if (hijoH != null) {                       
+                    // Crear las aristas dirigidas desde el nodo actual a cada hijo
+                    String nodoId = nodo.getId();
+
+                    for (String hijo : hijoH) { 
+                        // Crear un ID único para cada arista basada en el nodo actual y el nombre completo del hijo
+                        String aristaId = nodoId + "-" + hijo;
+
+                        // Verificar si la arista ya existe antes de agregarla
                         if (grafo.getEdge(aristaId) == null) {
-                            grafo.addEdge(aristaId, nodoId, hijoH, true);
+                            grafo.addEdge(aristaId, nodoId, hijo, true); // Agregar la arista al grafo
+       
+                                }
                             }
                         }
                     }
@@ -452,31 +474,39 @@ public class Menu extends javax.swing.JFrame {
     }
     //Al recibir un nombre y pasarle el nodo de su padre, se encarga de buscar en cada uno de sus hijos para ver si el nombre coincide con el buscado, si es asi 
     //retorna un string de el nombre de la persona mas el numeral mas el mote, el cual es la forma en la que se guardan los Id de cada nodo
-    public String buscarHijoPorNombre(Arbol nodoPadre, String nombreHijo) {
-    // Verificar si el nodo padre tiene hijos
-    if (nodoPadre == null || nodoPadre.getPrimerHijo() == null) {
-        return null;  // No hay hijos en este nodo
-    }
-
-    // Recorrer los hijos directos del nodo
+    public String[] buscarHijosPorNombre(Arbol nodoPadre, String nombreHijo) {
+    // Primera pasada: Contar cuántos hijos coinciden
+    int contador = 0;
     Arbol hijoActual = nodoPadre.getPrimerHijo();
     while (hijoActual != null) {
-        // Obtener la persona del hijo y comparar el nombre
         Persona hijoPersona = hijoActual.getValor();
         String nombreHijoActual = hijoPersona.getNombre().split(" ")[0]; // Obtener solo el nombre sin apellido
-
-        // Comparar si el nombre del hijo coincide con el nombre pasado
         if (nombreHijoActual.equals(nombreHijo)) {
-            // Si el nombre coincide, retornar el nombre completo con numeral
-            return hijoPersona.getNombre() + hijoPersona.getNumeral() +hijoPersona.getMote();
+            contador++;
         }
-
-        // Si no, continuar con el siguiente hermano derecho
         hijoActual = hijoActual.getHermanoDerecho();
     }
 
-    // Si no se encontró un hijo con ese nombre
-    return null;
+    // Si no se encontraron coincidencias, devolver null
+    if (contador == 0) {
+        return null;
+    }
+
+    // Segunda pasada: Almacenar los nombres en un arreglo
+    String[] resultado = new String[contador];
+    int indice = 0;
+    hijoActual = nodoPadre.getPrimerHijo();
+    while (hijoActual != null) {
+        Persona hijoPersona = hijoActual.getValor();
+        String nombreHijoActual = hijoPersona.getNombre().split(" ")[0];
+        if (nombreHijoActual.equals(nombreHijo)) {
+            resultado[indice] = hijoPersona.getNombre() + hijoPersona.getNumeral() + hijoPersona.getMote();
+            indice++;
+        }
+        hijoActual = hijoActual.getHermanoDerecho();
+    }
+
+    return resultado;
     }
     
     /*Esta funcion se encarga de revisar en un arbol si la perosna buscada se encuentra en este arbol, revisando si su nombre y numeral coincide, en caso de que coincidan

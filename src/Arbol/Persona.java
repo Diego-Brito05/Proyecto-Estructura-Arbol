@@ -84,6 +84,13 @@ public class Persona {
     public void setHijos(String[] hijos) {
         this.hijos = hijos;
     }
+
+    /**
+     * @return the titulo
+     */
+    public String getTitulo() {
+        return titulo;
+    }
     
     
 }
