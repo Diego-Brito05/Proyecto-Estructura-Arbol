@@ -19,9 +19,11 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
+
 
 /**
  *
@@ -178,7 +180,7 @@ public class Menu extends javax.swing.JFrame {
     // Crear la ventana para mostrar el grafo
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+    
     // Crear un panel con un diseño personalizado
     JPanel panel = new JPanel(new GridLayout()) {
         @Override
@@ -193,10 +195,10 @@ public class Menu extends javax.swing.JFrame {
     Viewer viewer = new SwingViewer(graph2, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 
     // Aplicar el layout antes de la visualización
-    graph2.setAttribute("ui.layout", "springbox");  // Aplica el layout SpringBox
-    graph2.setAttribute("ui.antialias", true);      // Habilitar suavizado
-    viewer.enableAutoLayout();  // Habilitar auto layout para que GraphStream calcule la distribución
+    graph2.setAttribute("ui.layout", "FruchtermanReingold"); // Aplica el layout SpringBox
+    viewer.enableAutoLayout();
 
+    
     // Obtener el panel de visualización y agregarlo al panel principal
     ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
     panel.add(viewPanel);
@@ -205,7 +207,9 @@ public class Menu extends javax.swing.JFrame {
     frame.pack();  // Ajustar tamaño del frame según el contenido
     frame.setLocationRelativeTo(null);  // Centrar la ventana en la pantalla
     frame.setVisible(true);
-
+    viewer.enableAutoLayout();
+    
+    
     // Agregar controlador de eventos para capturar clics sobre los nodos
     viewPanel.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
@@ -223,6 +227,7 @@ public class Menu extends javax.swing.JFrame {
                     // Obtener las coordenadas actuales del nodo
                     Double nodeX = node.getAttribute("x", Double.class);
                     Double nodeY = node.getAttribute("y", Double.class);
+                    
 
                     // Verificar si las coordenadas están disponibles
                     if (nodeX != null && nodeY != null) {
@@ -278,6 +283,8 @@ public class Menu extends javax.swing.JFrame {
             agregarPersonasAlGrafo(getArbol(),getFamilia());
             crearRelaciones(getFamilia());
             displayGraph(getFamilia());
+             
+            
         
         }
         catch(Exception err){
@@ -309,7 +316,7 @@ public class Menu extends javax.swing.JFrame {
     agregarAntepasadosAlGrafo(personaBuscada, grafoAntepasados, null);
 
     // Mostrar el grafo
-    displayGraph(grafoAntepasados);
+    grafoAntepasados.display();
     }//GEN-LAST:event_BuscarAntepasadosActionPerformed
     
     private Persona buscarPersonaPorNombrePer(String nombre) {
