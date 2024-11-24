@@ -6,7 +6,7 @@ Funciones del proyecto:
 
 3- Buscar por nombre: Para utilizar esta funcion, es importante que se escriba solo el nombre de la persona (no escriba el apellido) y que se escriba con mayuscula la primera letra del nombre. al final le mostrara toda la descendencia que se tenga registro de esa persona.
 
-4- Mostrar antepasados: esta funcion es muy similar a la de buscar por nombre solo que en vez de mostrar sus sucesores, muestra a sus antecesores.
+4- Mostrar antepasados: esta funcion es muy similar a la de buscar por nombre solo que en vez de mostrar sus sucesores, muestra a sus antecesores (actualmente no funciona).
 
 5- Buscar por titulo: al escribir alguno de los titulos de la familia real, mostrara a todas las personas que tengan ese titulo, despues de elegir a quien busca especificamente, se le mostrara toda la informacion que se tenga de esa persona.
 
