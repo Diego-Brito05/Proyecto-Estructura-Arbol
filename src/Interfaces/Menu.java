@@ -157,6 +157,9 @@ public class Menu extends javax.swing.JFrame {
                          
     }//GEN-LAST:event_CargaArchivoActionPerformed
     
+    /*
+    Esta funcion se encarga de crear un Jpanel, para luego añadirlo a un SwingViewer que tiene el grafo para luego mostrarlo
+    */
     public void displayGraph(Graph graph2) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -264,13 +267,20 @@ public class Menu extends javax.swing.JFrame {
             for (String hijoNombre : persona.getHijos()) {
                 Arbol nodoPersona = buscarNodoPorPersona(getArbol(), persona);
                 if (nodoPersona != null){
-                    String hijoH = buscarHijoPorNombre(nodoPersona, hijoNombre);
-                    if (hijoH != null) {                       
-                        // Crear una arista dirigida desde el nodo actual al nodo hijo
-                        String nodoId= nodo.getId();
-                        String aristaId = nodoId + "-" + hijoNombre;                       
+                    String[] hijoH = buscarHijosPorNombre(nodoPersona, hijoNombre);
+                if (hijoH != null) {                       
+                    // Crear las aristas dirigidas desde el nodo actual a cada hijo
+                    String nodoId = nodo.getId();
+
+                    for (String hijo : hijoH) { 
+                        // Crear un ID único para cada arista basada en el nodo actual y el nombre completo del hijo
+                        String aristaId = nodoId + "-" + hijo;
+
+                        // Verificar si la arista ya existe antes de agregarla
                         if (grafo.getEdge(aristaId) == null) {
-                            grafo.addEdge(aristaId, nodoId, hijoH, true);
+                            grafo.addEdge(aristaId, nodoId, hijo, true); // Agregar la arista al grafo
+       
+                                }
                             }
                         }
                     }
@@ -280,31 +290,39 @@ public class Menu extends javax.swing.JFrame {
     }
     //Al recibir un nombre y pasarle el nodo de su padre, se encarga de buscar en cada uno de sus hijos para ver si el nombre coincide con el buscado, si es asi 
     //retorna un string de el nombre de la persona mas el numeral mas el mote, el cual es la forma en la que se guardan los Id de cada nodo
-    public String buscarHijoPorNombre(Arbol nodoPadre, String nombreHijo) {
-    // Verificar si el nodo padre tiene hijos
-    if (nodoPadre == null || nodoPadre.getPrimerHijo() == null) {
-        return null;  // No hay hijos en este nodo
-    }
-
-    // Recorrer los hijos directos del nodo
+    public String[] buscarHijosPorNombre(Arbol nodoPadre, String nombreHijo) {
+    // Primera pasada: Contar cuántos hijos coinciden
+    int contador = 0;
     Arbol hijoActual = nodoPadre.getPrimerHijo();
     while (hijoActual != null) {
-        // Obtener la persona del hijo y comparar el nombre
         Persona hijoPersona = hijoActual.getValor();
         String nombreHijoActual = hijoPersona.getNombre().split(" ")[0]; // Obtener solo el nombre sin apellido
-
-        // Comparar si el nombre del hijo coincide con el nombre pasado
         if (nombreHijoActual.equals(nombreHijo)) {
-            // Si el nombre coincide, retornar el nombre completo con numeral
-            return hijoPersona.getNombre() + hijoPersona.getNumeral() +hijoPersona.getMote();
+            contador++;
         }
-
-        // Si no, continuar con el siguiente hermano derecho
         hijoActual = hijoActual.getHermanoDerecho();
     }
 
-    // Si no se encontró un hijo con ese nombre
-    return null;
+    // Si no se encontraron coincidencias, devolver null
+    if (contador == 0) {
+        return null;
+    }
+
+    // Segunda pasada: Almacenar los nombres en un arreglo
+    String[] resultado = new String[contador];
+    int indice = 0;
+    hijoActual = nodoPadre.getPrimerHijo();
+    while (hijoActual != null) {
+        Persona hijoPersona = hijoActual.getValor();
+        String nombreHijoActual = hijoPersona.getNombre().split(" ")[0];
+        if (nombreHijoActual.equals(nombreHijo)) {
+            resultado[indice] = hijoPersona.getNombre() + hijoPersona.getNumeral() + hijoPersona.getMote();
+            indice++;
+        }
+        hijoActual = hijoActual.getHermanoDerecho();
+    }
+
+    return resultado;
     }
     
     /*Esta funcion se encarga de revisar en un arbol si la perosna buscada se encuentra en este arbol, revisando si su nombre y numeral coincide, en caso de que coincidan
