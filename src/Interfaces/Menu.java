@@ -8,9 +8,11 @@ import EDD.HashTable;
 import Arbol.Arbol;
 import Arbol.Persona;
 import EDD.ListaPersona;
+import EDD.NodoPersona;
 import LectorJson.LectorJson;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.geom.Point2D;
 import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -93,6 +95,9 @@ public class Menu extends javax.swing.JFrame {
         Mant = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         BuscarAntepasados = new javax.swing.JButton();
+        mgenes = new javax.swing.JButton();
+        gene = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -125,11 +130,11 @@ public class Menu extends javax.swing.JFrame {
             }
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 480, 90, 20));
-        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 50, 150, -1));
+        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 150, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Mostrar Antepasados");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, -1, -1));
 
         BuscarAntepasados.setText("Buscar");
         BuscarAntepasados.setToolTipText("");
@@ -138,7 +143,19 @@ public class Menu extends javax.swing.JFrame {
                 BuscarAntepasadosActionPerformed(evt);
             }
         });
-        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
+        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, -1, -1));
+
+        mgenes.setText("Generacion");
+        mgenes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mgenesActionPerformed(evt);
+            }
+        });
+        jPanel1.add(mgenes, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 100, -1, -1));
+        jPanel1.add(gene, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 150, -1));
+
+        jLabel2.setText("Generacion");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 50, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -181,7 +198,7 @@ public class Menu extends javax.swing.JFrame {
     // Crear la ventana para mostrar el grafo
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    
+
     // Crear un panel con un diseño personalizado
     JPanel panel = new JPanel(new GridLayout()) {
         @Override
@@ -196,10 +213,19 @@ public class Menu extends javax.swing.JFrame {
     Viewer viewer = new SwingViewer(graph2, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 
     // Aplicar el layout antes de la visualización
-    graph2.setAttribute("ui.layout", "FruchtermanReingold"); // Aplica el layout SpringBox
+    graph2.setAttribute("ui.layout", "FruchtermanReingold");
     viewer.enableAutoLayout();
 
+    // Verificar que el layout haya aplicado y esperar un poco para que las coordenadas estén disponibles
     
+    try {
+        Thread.sleep(2000);  
+    } catch (InterruptedException e) {
+    }
+   
+    
+    
+
     // Obtener el panel de visualización y agregarlo al panel principal
     ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
     panel.add(viewPanel);
@@ -208,40 +234,47 @@ public class Menu extends javax.swing.JFrame {
     frame.pack();  // Ajustar tamaño del frame según el contenido
     frame.setLocationRelativeTo(null);  // Centrar la ventana en la pantalla
     frame.setVisible(true);
-    viewer.enableAutoLayout();
-    
-    
+    viewPanel.setFocusable(true);
+    viewPanel.requestFocusInWindow();
+    viewPanel.enableMouseOptions();
+
     // Agregar controlador de eventos para capturar clics sobre los nodos
-    viewPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+     viewPanel.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mousePressed(java.awt.event.MouseEvent e) {
             if (e.getButton() == java.awt.event.MouseEvent.BUTTON1) {  // Botón izquierdo del ratón
-                // Obtener las coordenadas del clic
+                // Obtener las coordenadas del clic en la pantalla
                 int x = e.getX();
                 int y = e.getY();
-
-                // Imprimir las coordenadas del clic
-                System.out.println("Clic detectado en: " + x + ", " + y);
+                System.out.println(x +" "+y);
+                viewer.enableAutoLayout();
 
                 // Iterar sobre todos los nodos del grafo para verificar si el clic es sobre un nodo
                 for (Node node : graph2) {
-                    // Obtener las coordenadas actuales del nodo
+                    // Obtener las coordenadas del nodo en el sistema del layout
                     Double nodeX = node.getAttribute("x", Double.class);
                     Double nodeY = node.getAttribute("y", Double.class);
-                    
-
-                    // Verificar si las coordenadas están disponibles
+            
                     if (nodeX != null && nodeY != null) {
-                        // Imprimir las coordenadas del nodo
-                        System.out.println("Nodo " + node.getId() + " tiene coordenadas: x = " + nodeX + ", y = " + nodeY);
+                        // Aquí comparamos las coordenadas del clic con las coordenadas del nodo
+                        // Transformamos las coordenadas del nodo a las de la pantalla
+                        // Debemos considerar el escalado y la traslación en la visualización
 
-                        // Verificar si el clic está cerca del nodo
-                        double nodeRadius = 20; // Ajustar según el tamaño de los nodos
-                        if (Math.abs(x - nodeX) < nodeRadius && Math.abs(y - nodeY) < nodeRadius) {
+                        // Verificar si el clic está dentro de un radio de distancia del nodo
+                        double nodeRadius = 20;  // Ajustar el tamaño del nodo si es necesario
+
+                        // Convertimos las coordenadas del nodo en coordenadas de pantalla
+                        // Esta parte depende de cómo esté configurada la visualización,
+                        // si no hay un método directo para obtener la posición en pantalla,
+                        // se hace una simple aproximación.
+                        double screenX = nodeX * 100 + 400;  // Esto puede necesitar ajustes
+                        double screenY = nodeY * 100 + 200;  // Ajuste para centrar el grafo en la ventana
+
+                        // Cálculo de distancia entre el clic y el nodo
+                        double distance = Math.sqrt(Math.pow(x - screenX, 2) + Math.pow(y - screenY, 2));
+
+                        if (distance < nodeRadius) {
                             // Si el clic es sobre el nodo
-                            System.out.println("Nodo clickeado: " + node.getId());
-
-                            // Recuperar el atributo 'persona' asociado con el nodo
                             Persona persona = (Persona) node.getAttribute("persona");
 
                             if (persona != null) {
@@ -283,6 +316,8 @@ public class Menu extends javax.swing.JFrame {
             setFamilia(Familia);
             agregarPersonasAlGrafo(getArbol(),getFamilia());
             crearRelaciones(getFamilia());
+            Familia.setAttribute("ui.layout", "FruchtermanReingold");
+            
             displayGraph(getFamilia());
         
         }
@@ -310,8 +345,9 @@ public class Menu extends javax.swing.JFrame {
 
     // Llamar al método que se encarga de crear el grafo y agregar los antepasados
     agregarAntepasadosAlGrafo(personaBuscada, ante);
+           
     }//GEN-LAST:event_BuscarAntepasadosActionPerformed
-    
+
      private void agregarAntepasadosAlGrafo(Persona persona, String ante) {
     // Crear un nuevo grafo para mostrar los antepasados
     Graph grafoAntepasados = new MultiGraph("Antepasados de " + ante);
@@ -355,6 +391,101 @@ private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, No
         }
     }
 }
+
+
+
+
+ 
+    private void mgenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mgenesActionPerformed
+        // TODO add your handling code here:
+       String geng = gene.getText();
+
+    try {
+        // Convertir la entrada a un número entero
+        int numeroGeneracion = Integer.parseInt(geng);
+
+        // Validar que el número sea positivo
+        if (numeroGeneracion < 0) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese un número de generación válido (mayor o igual a 0).", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Verificar si el árbol está cargado
+        if (this.arbol == null) {
+            JOptionPane.showMessageDialog(this, "No se ha cargado ningún archivo o el árbol está vacío.", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener las personas de la generación
+        ListaPersona generacion = obtenerPersonasPorGeneracion(this.arbol, numeroGeneracion);
+
+        // Construir el mensaje para mostrar en el JOptionPane
+        StringBuilder mensaje = new StringBuilder();
+        mensaje.append("Generación ").append(numeroGeneracion).append(":\n\n");
+
+        NodoPersona nodoActual = generacion.getCabeza();
+        if (nodoActual == null) {
+            mensaje.append("No hay personas en esta generación.");
+        } else {
+            while (nodoActual != null) {
+                Persona persona = nodoActual.persona;
+                mensaje.append("- ")
+                       .append(persona.getNombre())
+                       .append(" ")
+                       .append(persona.getNumeral())
+                       .append("\n");
+                nodoActual = nodoActual.siguiente;
+            }
+        }
+
+        // Mostrar el mensaje en un JOptionPane
+        JOptionPane.showMessageDialog(null, mensaje.toString(), 
+            "Personas de la generación " + numeroGeneracion, 
+            JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (NumberFormatException e) {
+        // Manejar errores si el texto no es un número válido
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese un número de generación válido.", 
+            "Error", JOptionPane.ERROR_MESSAGE);
+    }
+        
+    }//GEN-LAST:event_mgenesActionPerformed
+    
+    private ListaPersona obtenerPersonasPorGeneracion(Arbol nodoActual, int numeroGeneracion) {
+    ListaPersona listaGeneracion = new ListaPersona();
+
+    if (nodoActual == null) {
+        return listaGeneracion; // Devuelve una lista vacía si el árbol está vacío
+    }
+
+    // Método auxiliar para recorrer el árbol y agregar personas a la lista
+    obtenerGeneracionRecursivo(nodoActual, numeroGeneracion, 0, listaGeneracion);
+
+    return listaGeneracion;
+}
+
+private void obtenerGeneracionRecursivo(Arbol nodoActual, int numeroGeneracion, int nivelActual, ListaPersona listaGeneracion) {
+    if (nodoActual == null) {
+        return;
+    }
+
+    // Si el nivel actual coincide con la generación buscada, agrega la persona a la lista
+    if (nivelActual == numeroGeneracion) {
+        listaGeneracion.agregar(nodoActual.getValor());
+    }
+
+    // Recorrer los hijos del nodo actual
+    Arbol hijoActual = nodoActual.getPrimerHijo();
+    while (hijoActual != null) {
+        obtenerGeneracionRecursivo(hijoActual, numeroGeneracion, nivelActual + 1, listaGeneracion);
+        hijoActual = hijoActual.getHermanoDerecho();
+    }
+}
+
+    
+     
     
     private Persona buscarPersonaPorNombrePer(String nombre) {
     // Aquí debes implementar la lógica para buscar a la persona en el árbol
@@ -426,6 +557,7 @@ private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, No
             nodo.setAttribute("ui.style", estiloNodo);
             
             nodo.setAttribute("ui.label", uiLabel);
+            
 
             // Guardar el objeto Persona como atributo del nodo
             nodo.setAttribute("persona", persona);
@@ -603,9 +735,12 @@ private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, No
     private javax.swing.JButton CargaArchivo;
     private javax.swing.JTextField Mant;
     private javax.swing.JButton MostrarGrafo;
+    private javax.swing.JTextField gene;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton mgenes;
     // End of variables declaration//GEN-END:variables
 
     /**
