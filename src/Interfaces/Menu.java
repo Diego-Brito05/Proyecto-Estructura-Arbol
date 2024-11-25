@@ -110,6 +110,10 @@ public class Menu extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        Binf = new javax.swing.JButton();
+        infop = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -144,7 +148,7 @@ public class Menu extends javax.swing.JFrame {
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 480, 90, 20));
 
         Mant.setBackground(new java.awt.Color(204, 204, 204));
-        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 190, 150, -1));
+        jPanel1.add(Mant, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 170, 150, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Buscar Titulo");
@@ -158,7 +162,7 @@ public class Menu extends javax.swing.JFrame {
                 BuscarAntepasadosActionPerformed(evt);
             }
         });
-        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 220, -1, -1));
+        jPanel1.add(BuscarAntepasados, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 200, -1, -1));
 
         mgenes.setBackground(new java.awt.Color(153, 51, 255));
         mgenes.setText("Generacion");
@@ -167,7 +171,7 @@ public class Menu extends javax.swing.JFrame {
                 mgenesActionPerformed(evt);
             }
         });
-        jPanel1.add(mgenes, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 90, -1, -1));
+        jPanel1.add(mgenes, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 90, -1, -1));
 
         gene.setBackground(new java.awt.Color(204, 204, 204));
         gene.addActionListener(new java.awt.event.ActionListener() {
@@ -175,7 +179,7 @@ public class Menu extends javax.swing.JFrame {
                 geneActionPerformed(evt);
             }
         });
-        jPanel1.add(gene, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 60, 150, -1));
+        jPanel1.add(gene, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 60, 150, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Buscar Persona");
@@ -183,7 +187,7 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Mostrar Generacion");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, -1, 20));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 20, -1, 20));
 
         PersonaBuscar.setBackground(new java.awt.Color(204, 204, 204));
         PersonaBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -195,7 +199,7 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Mostrar Antepasados");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 140, -1, 20));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 130, -1, 20));
 
         BuscarPersona.setBackground(new java.awt.Color(153, 51, 255));
         BuscarPersona.setText("Buscar Persona");
@@ -205,7 +209,7 @@ public class Menu extends javax.swing.JFrame {
                 BuscarPersonaActionPerformed(evt);
             }
         });
-        jPanel1.add(BuscarPersona, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 430, -1, -1));
+        jPanel1.add(BuscarPersona, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 420, -1, -1));
 
         TituloBuscar.setBackground(new java.awt.Color(204, 204, 204));
         TituloBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -216,7 +220,7 @@ public class Menu extends javax.swing.JFrame {
         jPanel1.add(TituloBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 370, -1));
 
         jLabel2.setText("Escriba el nombre de la persona");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 170, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 150, -1, -1));
 
         BuscarTitulo.setBackground(new java.awt.Color(153, 51, 255));
         BuscarTitulo.setText("Buscar Personas");
@@ -226,7 +230,7 @@ public class Menu extends javax.swing.JFrame {
                 BuscarTituloActionPerformed(evt);
             }
         });
-        jPanel1.add(BuscarTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, -1));
+        jPanel1.add(BuscarTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 100, -1, -1));
 
         jLabel6.setText("Ej: King of the Andals and the First Men, Lord of the Seven Kingdoms ");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
@@ -235,13 +239,32 @@ public class Menu extends javax.swing.JFrame {
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 370, -1, -1));
 
         jLabel8.setText("Escriba el numero de la generacion");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 40, -1, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 40, -1, -1));
+
+        Binf.setBackground(new java.awt.Color(153, 51, 255));
+        Binf.setText("Buscar Info");
+        Binf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BinfActionPerformed(evt);
+            }
+        });
+        jPanel1.add(Binf, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 380, -1, -1));
+
+        infop.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.add(infop, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 340, 140, -1));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setText("Mostrar Informacion");
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 300, -1, -1));
+
+        jLabel10.setText("Escriba el Nombre de la Persona ");
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 320, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -264,9 +287,10 @@ public class Menu extends javax.swing.JFrame {
         this.arbol.validarYCompletarHijosPreorden(this.arbol);
         hashtable.putArbol(this.arbol);
         setHashtable(hashtable);
+        this.hashtable = hashtable;
         setArbol(arbol);
         JOptionPane.showMessageDialog(null, "Se ha cargado el archivo");
-                         
+        
     }//GEN-LAST:event_CargaArchivoActionPerformed
     
     /*
@@ -649,6 +673,55 @@ private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, No
             
         }
     }//GEN-LAST:event_BuscarTituloActionPerformed
+
+    private void BinfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BinfActionPerformed
+        // TODO add your handling code here:
+        String padreInfo = Binf.getText().trim();  // Lo que el usuario ingresa
+
+    // Verifica si el HashTable está inicializado
+    if (this.hashtable == null) {
+        JOptionPane.showMessageDialog(this, "Debe cargar un archivo primero.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Verifica si el campo de búsqueda está vacío
+    if (padreInfo.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese un nombre para buscar.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Buscar las personas en el HashTable usando el primer nombre como clave
+    Persona[] personasEncontradas = this.hashtable.get(padreInfo); // Esto usa el primer nombre como clave
+
+    // Si no se encuentran personas asociadas con la clave, mostrar mensaje
+    if (personasEncontradas.length == 0) {
+        JOptionPane.showMessageDialog(this, "No se encontraron personas con ese nombre.", "Resultado de Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+    } else {
+        // Si encontramos personas, mostrar los detalles en un JOptionPane
+        StringBuilder mensaje = new StringBuilder();
+        mensaje.append("Personas encontradas:\n");
+
+        for (Persona persona : personasEncontradas) {
+            mensaje.append("\n----------------------------------\n");
+            mensaje.append("Nombre: ").append(persona.getNombre()).append("\n");
+            mensaje.append("Numeral: ").append(persona.getNumeral()).append("\n");
+            mensaje.append("Padre: ").append(persona.getPadre()).append("\n");
+            mensaje.append("Mote: ").append(persona.getMote()).append("\n");
+            mensaje.append("Título: ").append(persona.getTitulo()).append("\n");
+            mensaje.append("Ojos: ").append(persona.getOjos()).append("\n");
+            mensaje.append("Pelo: ").append(persona.getPelo()).append("\n");
+            mensaje.append("Hijos: ").append(String.join(", ", persona.getHijos())).append("\n");
+        }
+
+        // Mostrar la información en un JOptionPane
+        JOptionPane.showMessageDialog(this, mensaje.toString(), "Resultado de Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+        
+        
+    }//GEN-LAST:event_BinfActionPerformed
+    
+   
     
     private ListaPersona obtenerPersonasPorGeneracion(Arbol nodoActual, int numeroGeneracion) {
     ListaPersona listaGeneracion = new ListaPersona();
@@ -928,6 +1001,7 @@ private void obtenerGeneracionRecursivo(Arbol nodoActual, int numeroGeneracion, 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Binf;
     private javax.swing.JButton BuscarAntepasados;
     private javax.swing.JButton BuscarPersona;
     private javax.swing.JButton BuscarTitulo;
@@ -937,8 +1011,10 @@ private void obtenerGeneracionRecursivo(Arbol nodoActual, int numeroGeneracion, 
     private javax.swing.JTextField PersonaBuscar;
     private javax.swing.JTextField TituloBuscar;
     private javax.swing.JTextField gene;
+    private javax.swing.JTextField infop;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -946,6 +1022,7 @@ private void obtenerGeneracionRecursivo(Arbol nodoActual, int numeroGeneracion, 
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton mgenes;
     // End of variables declaration//GEN-END:variables
