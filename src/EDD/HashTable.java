@@ -145,4 +145,43 @@ public class HashTable {
         return size;
     }
     
+    public Persona[] getPersonasPorNombre(String nombre) {
+    // Primero, calculamos cuántas personas coinciden con el nombre
+    int contador = 0;
+
+    // Recorremos toda la tabla de listas de personas
+    for (ListaPersona lista : getTabla()) {
+        if (lista != null) {
+            // Si la lista no está vacía, buscamos las personas que coincidan con el nombre
+            for (Persona persona : lista.obtenerPersonas()) {
+                if (persona.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
+                    contador++;
+                }
+            }
+        }
+    }
+
+    // Si no se encontraron personas, devolvemos un arreglo vacío
+    if (contador == 0) {
+        return new Persona[0];
+    }
+
+    // Creamos un arreglo con el tamaño del contador
+    Persona[] resultado = new Persona[contador];
+    int index = 0;
+
+    // Recorremos nuevamente la tabla y agregamos las personas encontradas al arreglo
+    for (ListaPersona lista : getTabla()) {
+        if (lista != null) {
+            for (Persona persona : lista.obtenerPersonas()) {
+                if (persona.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
+                    resultado[index++] = persona;
+                }
+            }
+        }
+    }
+
+    return resultado;
+}
+    
 }

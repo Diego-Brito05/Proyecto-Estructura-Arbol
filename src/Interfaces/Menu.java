@@ -676,28 +676,25 @@ private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, No
 
     private void BinfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BinfActionPerformed
         // TODO add your handling code here:
-        String padreInfo = Binf.getText().trim();  // Lo que el usuario ingresa
+        String padreInfo = Binf.getText().trim(); // Obtener el nombre a buscar
+    System.out.println("Buscando por nombre: " + padreInfo);  // Para depuración
 
-    // Verifica si el HashTable está inicializado
     if (this.hashtable == null) {
         JOptionPane.showMessageDialog(this, "Debe cargar un archivo primero.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Verifica si el campo de búsqueda está vacío
     if (padreInfo.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Por favor, ingrese un nombre para buscar.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Buscar las personas en el HashTable usando el primer nombre como clave
-    Persona[] personasEncontradas = this.hashtable.get(padreInfo); // Esto usa el primer nombre como clave
+    // Buscar todas las personas que coincidan con el nombre
+    Persona[] personasEncontradas = this.hashtable.getPersonasPorNombre(padreInfo);
 
-    // Si no se encuentran personas asociadas con la clave, mostrar mensaje
     if (personasEncontradas.length == 0) {
         JOptionPane.showMessageDialog(this, "No se encontraron personas con ese nombre.", "Resultado de Búsqueda", JOptionPane.INFORMATION_MESSAGE);
     } else {
-        // Si encontramos personas, mostrar los detalles en un JOptionPane
         StringBuilder mensaje = new StringBuilder();
         mensaje.append("Personas encontradas:\n");
 
@@ -713,7 +710,6 @@ private void agregarAntepasadosAlGrafoRecursivo(Persona persona, Graph grafo, No
             mensaje.append("Hijos: ").append(String.join(", ", persona.getHijos())).append("\n");
         }
 
-        // Mostrar la información en un JOptionPane
         JOptionPane.showMessageDialog(this, mensaje.toString(), "Resultado de Búsqueda", JOptionPane.INFORMATION_MESSAGE);
     }
 
