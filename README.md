@@ -12,6 +12,8 @@ Funciones del proyecto:
 
 6- Lista de integrantes de una generación: al ingresar un numero (por ejemplo, si quiere revisar la tercera generacion, escribe 3) se le mostrara la lista de todas las personas que sean parte de esa generacion.
 
+Nota:La aplicacion es lo que esta guardaado en la carpeta Proyecto-Estructura-Arbol-Jose
+
 Realizado Por:
 
 Diego Brito
